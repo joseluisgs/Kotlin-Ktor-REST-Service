@@ -15,7 +15,6 @@ fun Application.module() {
         get("/") {
             call.respondText("\uD83D\uDC4B Hola Kotlin REST Service con Kotlin-Ktor")
         }
-        // Contenido estático, desde la carpeta resoruces cuando entran a /web
     }
     // Registramos las rutas de la aplicación
     registerWebContentRouting()

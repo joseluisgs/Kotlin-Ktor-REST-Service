@@ -37,7 +37,6 @@ routing {
     get("/") {
         call.respondText("👋 Hola Kotlin REST Service con Kotlin-Ktor")
     }
-    // Contenido estático, desde la carpeta resoruces cuando entran a /web
 }
 ```
 

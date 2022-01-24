@@ -1,9 +1,9 @@
 # Kotlin Ktor  REST Service
-Servicio API REST con Kotlin y Ktor.  
+Servicio web para API REST con Kotlin y Ktor.  
 
 [![Kotlin](https://img.shields.io/badge/Code-Kotlin-blueviolet)](https://kotlinlang.org/)
 [![LISENCE](https://img.shields.io/badge/Lisence-MIT-green)]()
-![GitHub](https://img.shields.io/github/last-commit/joseluisgs/Kotlin-REST-Retrofit)
+![GitHub](https://img.shields.io/github/last-commit/joseluisgs/Kotlin-Ktor-REST-Service)
 
 
 ![imagen](https://www.adesso-mobile.de/wp-content/uploads/2021/02/kotlin-einfu%CC%88hrung.jpg)

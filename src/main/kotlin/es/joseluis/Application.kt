@@ -13,7 +13,7 @@ fun Application.module() {
     routing {
         // Entrada en la api
         get("/") {
-            call.respondText(" \uD83D\uDC4B Hola Kotlin REST Service con Ktor")
+            call.respondText("\uD83D\uDC4B Hola Kotlin REST Service con Kotlin-Ktor")
         }
         // Contenido estático, desde la carpeta resoruces cuando entran a /web
     }

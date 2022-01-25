@@ -1,3 +1,11 @@
 package es.joseluisgs
 
-class ApplicationTest
+import org.junit.Test
+import kotlin.test.assertTrue
+
+class ApplicationTest {
+    @Test
+    fun trueIsTrue() {
+        assertTrue(true)
+    }
+}

@@ -13,6 +13,14 @@ Servicio web para API REST con Kotlin y Ktor.
   - [Ktor](#ktor)
     - [Punto de Entrada](#punto-de-entrada)
     - [Creando rutas](#creando-rutas)
+    - [Serializando a JSON](#serializando-a-json)
+  - [Referencia API REST](#referencia-api-rest)
+    - [Recurso Customers](#recurso-customers)
+      - [Get all items](#get-all-items)
+      - [Get item by id](#get-item-by-id)
+      - [Update item by id](#update-item-by-id)
+      - [Delete item by id](#delete-item-by-id)
+  - [PostMan](#postman)
   - [Autor](#autor)
     - [Contacto](#contacto)
   - [Licencia](#licencia)
@@ -39,6 +47,50 @@ routing {
     }
 }
 ```
+### Serializando a JSON
+Para serializar objetos a JSON, usamos la librería de serialización de [Kotlin](https://kotlinlang.org/docs/serialization.html), especialmente para hacer la negociación de contenido en [JSON](https://github.com/Kotlin/kotlinx.serialization).
+
+Para ello, las clases POJO a serailizar son indicadas con @Serializable.
+
+```kotlin
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Customer(var id: String, val firstName: String, val lastName: String, val email: String)
+```
+Posteriormente, en nuestra Application de Ktor, instalamos como un plugin la negociación de contenido en JSON.
+
+```kotlin
+install(ContentNegotiation) {
+  json()
+}
+```
+
+
+## Referencia API REST
+
+### Recurso Customers
+
+#### Get all items
+```http
+  GET /rest/customers
+```
+
+#### Get item by id
+```http
+  GET /rest/customers/{id}
+```
+#### Update item by id
+```http
+  PUT /rest/customers/{id}
+```
+#### Delete item by id
+```http
+  DELETE /rest/customers/${id}
+```
+
+## PostMan
+Puedes consumir el servicio REST con PostMan. Para ello solo debes importar la [colección de ejemplo](./postman/Kotlin-Ktor-REST-Service.postman_collection.json) y ejecutar las mismas.
 
 ## Autor
 

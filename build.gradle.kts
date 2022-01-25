@@ -5,6 +5,8 @@ val logback_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.6.10"
+    // Si queremos usar shadowJAR: https://ktor.io/docs/fatjar.html#run
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "es.joseluisgs"
@@ -26,8 +28,28 @@ dependencies {
     // Logback para Ktor basado en serialization
     implementation("ch.qos.logback:logback-classic:$logback_version")
     // Poder serializar usando Kotlin serialization
-    implementation ("io.ktor:ktor-serialization:$ktor_version")
+    implementation("io.ktor:ktor-serialization:$ktor_version")
     // Utilizades para test
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+tasks {
+    // Creamos un jar de la manera sin shadowJAR
+    jar {
+        manifest {
+            attributes["Main-Class"] = "es.joseluisgs.ApplicationKt"
+        }
+        configurations["compileClasspath"].forEach { file: File ->
+            from(zipTree(file.absoluteFile))
+        }
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+
+    // Creamos un jar con shadowJAR
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", "es.joseluisgs.ApplicationKt"))
+        }
+    }
 }

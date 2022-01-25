@@ -1,4 +1,4 @@
-package es.joseluis.routes
+package es.joseluisgs.routes
 
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*

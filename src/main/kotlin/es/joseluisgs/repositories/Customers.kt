@@ -1,6 +1,7 @@
 package es.joseluisgs.repositories
 
 import es.joseluisgs.models.Customer
+import java.util.*
 
 object Customers {
     val customers = mutableListOf(
@@ -18,5 +19,24 @@ object Customers {
 
     fun getAll() = customers.toList()
 
+    fun getById(id: String) = customers.find { it.id == id }
+
+    fun update(id: String, customer: Customer): Boolean {
+        val index = customers.indexOfFirst { it.id == id }
+        return if (index >= 0) {
+            customer.id = id
+            customers[index] = customer
+            true
+        } else {
+            false
+        }
+    }
+
+    fun save(customer: Customer) {
+        customer.id = UUID.randomUUID().toString()
+        customers.add(customer)
+    }
+
+    fun delete(id: String) = customers.removeIf { it.id == id }
 
 }

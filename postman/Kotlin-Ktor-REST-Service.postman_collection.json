@@ -56,7 +56,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"7\",\n    \"firstName\": \"Vegeta\",\n    \"lastName\": \"Principe\",\n    \"email\": \"vegeta@dragonball.com\"\n}",
+							"raw": "{\n    \"firstName\": \"Vegeta\",\n    \"lastName\": \"Principe\",\n    \"email\": \"vegeta@dragonball.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -133,6 +133,207 @@
 								"rest",
 								"customers",
 								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "GET ALL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/orders/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"customerID\": \"8\",\n        \"contents\": [\n            {\n                \"item\": \"Ham Sandwich\",\n                \"amount\": 2,\n                \"price\": 5.5\n            },\n            {\n                \"item\": \"Water\",\n                \"amount\": 1,\n                \"price\": 1.5\n            },\n            {\n                \"item\": \"Beer\",\n                \"amount\": 3,\n                \"price\": 2.3\n            },\n            {\n                \"item\": \"Cheesecake\",\n                \"amount\": 1,\n                \"price\": 3.75\n            }\n        ]\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"customerID\": \"8\",\n        \"contents\": [\n            {\n                \"item\": \"Cheesecake\",\n                \"amount\": 1,\n                \"price\": 3.75\n            }\n        ]\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/orders/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"customerID\": \"8\",\n        \"contents\": [\n            {\n                \"item\": \"Cheesecake\",\n                \"amount\": 1,\n                \"price\": 3.75\n            }\n        ]\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/orders/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET CONTENTS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/orders/1/contents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders",
+								"1",
+								"contents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET TOTAL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/orders/1/total",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders",
+								"1",
+								"total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET CUSTOMER",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/orders/1/customer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders",
+								"1",
+								"customer"
 							]
 						}
 					},

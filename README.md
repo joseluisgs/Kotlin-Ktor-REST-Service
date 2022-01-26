@@ -16,10 +16,19 @@ Servicio web para API REST con Kotlin y Ktor.
     - [Serializando a JSON](#serializando-a-json)
   - [Referencia API REST](#referencia-api-rest)
     - [Recurso Customers](#recurso-customers)
-      - [Get all items](#get-all-items)
-      - [Get item by id](#get-item-by-id)
-      - [Update item by id](#update-item-by-id)
-      - [Delete item by id](#delete-item-by-id)
+      - [Get all customers](#get-all-customers)
+      - [Get customer by id](#get-customer-by-id)
+      - [Update customer by id](#update-customer-by-id)
+      - [Delete customer by id](#delete-customer-by-id)
+    - [Recurso Orders](#recurso-orders)
+      - [Get all orders](#get-all-orders)
+      - [Get order by id](#get-order-by-id)
+      - [Update order by id](#update-order-by-id)
+      - [Delete order by id](#delete-order-by-id)
+      - [Get contents by order id](#get-contents-by-order-id)
+      - [Get contents by order id](#get-contents-by-order-id-1)
+      - [Get total by order id](#get-total-by-order-id)
+      - [Get customer by order id](#get-customer-by-order-id)
   - [PostMan](#postman)
   - [Autor](#autor)
     - [Contacto](#contacto)
@@ -71,23 +80,60 @@ install(ContentNegotiation) {
 
 ### Recurso Customers
 
-#### Get all items
+#### Get all customers
 ```http
   GET /rest/customers
 ```
 
-#### Get item by id
+#### Get customer by id
 ```http
   GET /rest/customers/{id}
 ```
-#### Update item by id
+#### Update customer by id
 ```http
   PUT /rest/customers/{id}
 ```
-#### Delete item by id
+#### Delete customer by id
 ```http
   DELETE /rest/customers/{id}
 ```
+
+### Recurso Orders
+
+#### Get all orders
+```http
+  GET /rest/orders
+```
+
+#### Get order by id
+```http
+  GET /rest/orders/{id}
+```
+#### Update order by id
+```http
+  PUT /rest/orders/{id}
+```
+#### Delete order by id
+```http
+  DELETE /rest/orders/{id}
+```
+#### Get contents by order id
+```http
+  GET /rest/orders/{id}
+```
+#### Get contents by order id
+```http
+  GET /rest/orders/{id}/contents
+```
+#### Get total by order id
+```http
+  GET /rest/orders/{id}/total
+```
+#### Get customer by order id
+```http
+  GET /rest/orders/{id}/customer
+```
+
 
 ## PostMan
 Puedes consumir el servicio REST con PostMan. Para ello solo debes importar la [colección de ejemplo](./postman/Kotlin-Ktor-REST-Service.postman_collection.json) y ejecutar las mismas.

@@ -3,7 +3,10 @@ package es.joseluisgs.repositories
 import es.joseluisgs.models.Customer
 import java.util.*
 
-object Customers {
+/**
+ * Repositorio de clientes
+ */
+object Customers : CrudRepository<Customer, String> {
     val customers = mutableListOf(
         Customer("1", "Chuck", "Norris", "chuck@norris.com"),
         Customer("2", "Bruce", "Wayne", "batman@iam.com"),
@@ -17,26 +20,27 @@ object Customers {
 
     fun isEmpty() = customers.isEmpty()
 
-    fun getAll() = customers.toList()
+    override fun getAll() = customers.toList()
 
-    fun getById(id: String) = customers.find { it.id == id }
+    override fun getById(id: String) = customers.find { it.id == id }
 
-    fun update(id: String, customer: Customer): Boolean {
+    override fun update(id: String, entity: Customer): Boolean {
         val index = customers.indexOfFirst { it.id == id }
         return if (index >= 0) {
-            customer.id = id
-            customers[index] = customer
+            // Por si nos ha llegado el id cambiado en el objeto distinto al de la ruta
+            entity.id = id
+            customers[index] = entity
             true
         } else {
             false
         }
     }
 
-    fun save(customer: Customer) {
-        customer.id = UUID.randomUUID().toString()
-        customers.add(customer)
+    override fun save(entity: Customer) {
+        entity.id = UUID.randomUUID().toString()
+        customers.add(entity)
     }
 
-    fun delete(id: String) = customers.removeIf { it.id == id }
+    override fun delete(id: String) = customers.removeIf { it.id == id }
 
 }

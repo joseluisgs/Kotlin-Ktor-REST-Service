@@ -1,8 +1,8 @@
 package es.joseluisgs.routes
 
 import es.joseluisgs.error.ErrorResponse
-import es.joseluisgs.models.Customer
-import es.joseluisgs.repositories.Customers
+import es.joseluisgs.models.Order
+import es.joseluisgs.repositories.Orders
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -10,30 +10,30 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 // Aplicamos las rutas a la aplicacion, extendiendo su routing
-fun Application.customersRoutes() {
+fun Application.ordersRoutes() {
     routing {
-        customersRoutes()
+        ordersRoutes()
     }
 }
 
 // Definimos las rutas de este recurso
-fun Route.customersRoutes() {
-    route("rest/customers") {
+fun Route.ordersRoutes() {
+    route("rest/orders") {
 
-        // GET /rest/customers/
+        // GET /rest/orders/
         get {
             // Si no es vacio devuelve todos los customers
-            if (!Customers.isEmpty()) {
-                call.respond(Customers.getAll())
+            if (!Orders.isEmpty()) {
+                call.respond(Orders.getAll())
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No customers found")
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No orders found")
                 )
             }
         }
 
-        // GET /rest/customers/{id}
+        // GET /rest/orders/{id}
         get("{id}") {
             // Si es nulo, hacemos un retur del error con @get para indicar que sale de esta parte del lambda,
             // si no saldríamos del metodo prinicipal y porque usamos call
@@ -43,29 +43,29 @@ fun Route.customersRoutes() {
             )
 
             // Buscamos el cliente con el id pasado, si no está devolvemos el error
-            val customer =
-                Customers.getById(id) ?: return@get call.respond(
+            val order =
+                Orders.getById(id) ?: return@get call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No customer with id $id")
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
                 )
 
-            call.respond(customer)
+            call.respond(order)
         }
 
-        // PUT /rest/customers/{id}
+        // PUT /rest/orders/{id}
         put("{id}") {
             val id = call.parameters["id"] ?: return@put call.respond(
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
             try {
-                val customer = call.receive<Customer>()
-                if (Customers.update(id, customer)) {
-                    call.respond(customer)
+                val order = call.receive<Order>()
+                if (Orders.update(id, order)) {
+                    call.respond(order)
                 } else {
                     call.respond(
                         HttpStatusCode.NotFound,
-                        ErrorResponse(HttpStatusCode.NotFound.value, "No customer with id $id")
+                        ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
                     )
                 }
             } catch (e: Exception) {
@@ -76,12 +76,12 @@ fun Route.customersRoutes() {
             }
         }
 
-        // POST /rest/customers
+        // POST /rest/orders/
         post {
             try {
-                val customer = call.receive<Customer>()
-                Customers.save(customer)
-                call.respond(status = HttpStatusCode.Created, customer)
+                val order = call.receive<Order>()
+                Orders.save(order)
+                call.respond(status = HttpStatusCode.Created, order)
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.BadRequest,
@@ -91,18 +91,18 @@ fun Route.customersRoutes() {
 
         }
 
-        // DELETE /rest/customers/{id}
+        // DELETE /rest/orders/{id}
         delete("{id}") {
             val id = call.parameters["id"] ?: return@delete call.respond(
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
-            if (Customers.delete(id)) {
+            if (Orders.delete(id)) {
                 call.respond(HttpStatusCode.Accepted)
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No customer with id $id")
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
                 )
             }
         }

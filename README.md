@@ -86,7 +86,7 @@ install(ContentNegotiation) {
 ```
 #### Delete item by id
 ```http
-  DELETE /rest/customers/${id}
+  DELETE /rest/customers/{id}
 ```
 
 ## PostMan

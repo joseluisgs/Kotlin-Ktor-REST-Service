@@ -1,15 +1,17 @@
 package es.joseluisgs
 
 import es.joseluisgs.routes.customersRoutes
+import es.joseluisgs.routes.ordersRoutes
 import es.joseluisgs.routes.webRoutes
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
+import io.ktor.server.netty.*
 
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
     // Si no le pasamos un puerto, leemos por defecto
@@ -34,5 +36,5 @@ fun Application.module() {
     // Registramos las rutas de la aplicación
     webRoutes()
     customersRoutes()
-
+    ordersRoutes()
 }

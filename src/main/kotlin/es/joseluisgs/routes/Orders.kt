@@ -22,7 +22,6 @@ fun Route.ordersRoutes() {
 
         // GET /rest/orders/
         get {
-            // Si no es vacio devuelve todos los customers
             if (!Orders.isEmpty()) {
                 call.respond(Orders.getAll())
             } else {
@@ -42,7 +41,6 @@ fun Route.ordersRoutes() {
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
 
-            // Buscamos el cliente con el id pasado, si no está devolvemos el error
             val order =
                 Orders.getById(id) ?: return@get call.respond(
                     HttpStatusCode.NotFound,
@@ -58,6 +56,7 @@ fun Route.ordersRoutes() {
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
+
             try {
                 val order = call.receive<Order>()
                 if (Orders.update(id, order)) {
@@ -88,7 +87,6 @@ fun Route.ordersRoutes() {
                     ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
-
         }
 
         // DELETE /rest/orders/{id}
@@ -97,6 +95,7 @@ fun Route.ordersRoutes() {
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
+
             if (Orders.delete(id)) {
                 call.respond(HttpStatusCode.Accepted)
             } else {
@@ -105,6 +104,55 @@ fun Route.ordersRoutes() {
                     ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
                 )
             }
+        }
+
+        // GET /rest/orders/{id}/contents
+        get("{id}/contents") {
+            val id = call.parameters["id"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+            )
+
+            val contents =
+                Orders.getContents(id) ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                )
+
+            call.respond(contents)
+        }
+
+        // GET /rest/orders/{id}/total
+        get("{id}/total") {
+            val id = call.parameters["id"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+            )
+
+            val total =
+                Orders.getTotal(id) ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                )
+
+
+            call.respond(mapOf("total" to total))
+        }
+
+        // GET /rest/orders/{id}/customer
+        get("{id}/customer") {
+            val id = call.parameters["id"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+            )
+
+            val customer =
+                Orders.getCustomer(id) ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                )
+
+            call.respond(customer)
         }
     }
 }

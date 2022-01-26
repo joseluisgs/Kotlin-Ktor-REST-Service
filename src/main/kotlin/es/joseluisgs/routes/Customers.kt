@@ -58,6 +58,7 @@ fun Route.customersRoutes() {
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
+
             try {
                 val customer = call.receive<Customer>()
                 if (Customers.update(id, customer)) {
@@ -88,7 +89,6 @@ fun Route.customersRoutes() {
                     ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
-
         }
 
         // DELETE /rest/customers/{id}
@@ -97,6 +97,7 @@ fun Route.customersRoutes() {
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
+            
             if (Customers.delete(id)) {
                 call.respond(HttpStatusCode.Accepted)
             } else {

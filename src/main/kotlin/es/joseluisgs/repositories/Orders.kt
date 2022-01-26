@@ -1,5 +1,6 @@
 package es.joseluisgs.repositories
 
+import es.joseluisgs.models.Customer
 import es.joseluisgs.models.Order
 import es.joseluisgs.models.OrderItem
 import java.util.*
@@ -68,4 +69,13 @@ object Orders : CrudRepository<Order, String> {
     }
 
     override fun delete(id: String) = orders.removeIf { it.id == id }
+
+    fun getContents(id: String) = orders.find { it.id == id }?.contents
+
+    fun getTotal(id: String) = orders.find { it.id == id }?.contents?.sumOf { it.price * it.amount }
+
+    fun getCustomer(id: String): Customer? {
+        val customerID = orders.find { it.id == id }?.customerID
+        return customerID?.let { Customers.getById(it) }
+    }
 }

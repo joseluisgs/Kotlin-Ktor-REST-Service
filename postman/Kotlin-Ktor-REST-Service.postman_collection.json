@@ -340,6 +340,75 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Uploads",
+			"item": [
+				{
+					"name": "UPLOAD",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/link/Proyectos/Kotlin-Ktor-REST-Service/postman/Kotlin-Ktor-REST-Service.postman_collection.json"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/uploads",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"uploads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DWONLOAD",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/link/Proyectos/Kotlin-Ktor-REST-Service/postman/Kotlin-Ktor-REST-Service.postman_collection.json"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/uploads/1c66b792-08a0-4895-a507-d508d928865d.json",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"uploads",
+								"1c66b792-08a0-4895-a507-d508d928865d.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

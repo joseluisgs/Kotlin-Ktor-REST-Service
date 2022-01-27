@@ -2,6 +2,7 @@ package es.joseluisgs
 
 import es.joseluisgs.routes.customersRoutes
 import es.joseluisgs.routes.ordersRoutes
+import es.joseluisgs.routes.uploadsRoutes
 import es.joseluisgs.routes.webRoutes
 import io.ktor.application.*
 import io.ktor.features.*
@@ -37,4 +38,5 @@ fun Application.module() {
     webRoutes()
     customersRoutes()
     ordersRoutes()
+    uploadsRoutes()
 }

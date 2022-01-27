@@ -13,4 +13,5 @@ bin/
 .idea/
 *.iml
 *.iws
-*.ipr
+*.ipruploads/
+uploads/

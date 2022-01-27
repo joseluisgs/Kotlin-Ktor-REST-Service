@@ -14,6 +14,11 @@ Servicio web para API REST con Kotlin y Ktor.
     - [Punto de Entrada](#punto-de-entrada)
     - [Creando rutas](#creando-rutas)
     - [Serializando a JSON](#serializando-a-json)
+    - [Procesando Request](#procesando-request)
+      - [Parámetros de ruta](#parámetros-de-ruta)
+      - [Parámetros de consulta](#parámetros-de-consulta)
+      - [Parámetros de cuerpo](#parámetros-de-cuerpo)
+      - [Peticiones multiparte](#peticiones-multiparte)
   - [Referencia API REST](#referencia-api-rest)
     - [Recurso Customers](#recurso-customers)
       - [Get all customers](#get-all-customers)
@@ -29,6 +34,9 @@ Servicio web para API REST con Kotlin y Ktor.
       - [Get contents by order id](#get-contents-by-order-id-1)
       - [Get total by order id](#get-total-by-order-id)
       - [Get customer by order id](#get-customer-by-order-id)
+    - [Subida/Bajada de archivos](#subidabajada-de-archivos)
+      - [Get/Download file by name](#getdownload-file-by-name)
+      - [Post/Upload file](#postupload-file)
   - [PostMan](#postman)
   - [Autor](#autor)
     - [Contacto](#contacto)
@@ -74,7 +82,58 @@ install(ContentNegotiation) {
   json()
 }
 ```
-
+### Procesando Request
+Dentro de un controlador de ruta, puedes obtener acceso a una solicitud utilizando la propiedad call.request. Esto devuelve la instancia de ApplicationRequest y proporciona acceso a varios parámetros de solicitud. 
+```kotlin
+routing {
+    get("/") {
+        val uri = call.request.uri
+        call.respondText("Request uri: $uri")
+    }
+}
+```
+#### Parámetros de ruta
+Para obtener acceso a los valores de los parámetros de ruta mediante la propiedad call.parameters. Por ejemplo, call.parameters["login"] devolverá admin para la ruta /user/admin
+```kotlin
+get("/user/{login}") {
+    if (call.parameters["login"] == "admin") {
+        call.respondText("Request admin: ${call.parameters["login"]}")
+    }
+}
+```
+#### Parámetros de consulta
+Para obtener acceso a los parámetros de una cadena de consulta, puede usar la propiedad ApplicationRequest.queryParameters. Por ejemplo, si se realiza una solicitud a /products?price=asc, puede acceder al parámetro de consulta de precio.
+```kotlin
+get("/products") {
+    if (call.request.queryParameters["price"] == "asc") {
+        call.respondText("Request price: ${call.request.queryParameters["price"]}")
+    }
+}
+```
+#### Parámetros de cuerpo
+Ktor proporciona un [complemento de negociación de contenido](#serializando-a-json) para negociar el tipo de medio de la solicitud y deserializar el contenido a un objeto de un tipo requerido. Para recibir y convertir contenido para una solicitud, llama al método de recepción que acepta una clase de datos como parámetro.
+```kotlin
+post("/customer") {
+    val customer = call.receive<Customer>()
+    customerStorage.add(customer)
+    call.respondText("Customer stored correctly", status = HttpStatusCode.Created)
+}
+```
+#### Peticiones multiparte
+Si necesita recibir un archivo enviado como parte de una solicitud de varias partes, llame a la función receiveMultipart y luego recorra cada parte según sea necesario. En el siguiente ejemplo, PartData.FileItem se usa para recibir un archivo como flujo de bytes.
+```kotlin
+post("/upload") {
+    //  multipart data (suspending)
+    val multipart = call.receiveMultipart()
+    multipart.forEachPart { part ->
+      val fileName = part.originalFileName as String
+      var fileBytes = part.streamProvider().readBytes()
+      File("uploads/$fileName").writeBytes(fileBytes)
+      part.dispose()
+    }
+    call.respondText("$fileName is uploaded to 'uploads/$fileName'")
+}
+```
 
 ## Referencia API REST
 
@@ -132,6 +191,17 @@ install(ContentNegotiation) {
 #### Get customer by order id
 ```http
   GET /rest/orders/{id}/customer
+```
+
+### Subida/Bajada de archivos
+#### Get/Download file by name
+```http
+  GET /rest/uploads/{fileName}
+```
+
+#### Post/Upload file
+```http
+  POST /rest/uploads/
 ```
 
 

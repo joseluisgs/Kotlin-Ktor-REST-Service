@@ -8,7 +8,7 @@ import io.ktor.features.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
-import io.ktor.server.netty.*
+import io.ktor.server.cio.*
 
 
 fun main(args: Array<String>) = EngineMain.main(args)

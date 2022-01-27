@@ -30,12 +30,13 @@ dependencies {
     // Nucleo de Ktor
     implementation("io.ktor:ktor-server-core:$ktor_version")
     // Netty Engine para Ktor
-    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    // implementation("io.ktor:ktor-server-netty:$ktor_version")
+    // CIO Engine para Ktor
+    implementation("io.ktor:ktor-server-cio:$ktor_version")
     // Logback para Ktor basado en serialization
     implementation("ch.qos.logback:logback-classic:$logback_version")
     // Poder serializar usando Kotlin serialization
     implementation("io.ktor:ktor-serialization:$ktor_version")
-    // implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
     // Utilizades para test
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")

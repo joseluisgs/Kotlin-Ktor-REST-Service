@@ -1,6 +1,7 @@
 package es.joseluisgs.routes
 
 import es.joseluisgs.error.ErrorResponse
+import es.joseluisgs.services.Storage
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -8,13 +9,20 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import java.io.File
-import java.util.*
 
 var UPLOADS_DIR = "uploads"
 var URL = ""
 
 fun Application.uploadsRoutes() {
     // Para montar la URL completa del ficheros, necesito los datos del servidor
+    initUploadsDirectory()
+
+    routing {
+        uploadsRoutes()
+    }
+}
+
+private fun Application.initUploadsDirectory() {
     URL = environment.config.property("server.baseUrl").getString()
     UPLOADS_DIR = environment.config.property("uploads.dir").getString()
 
@@ -27,9 +35,6 @@ fun Application.uploadsRoutes() {
             File(UPLOADS_DIR).listFiles()?.forEach { it.delete() }
         }
     }
-    routing {
-        uploadsRoutes()
-    }
 }
 
 fun Route.uploadsRoutes() {
@@ -39,29 +44,34 @@ fun Route.uploadsRoutes() {
             // Recibimos el multiparte
             val multipartData = call.receiveMultipart()
             var fileDescription = ""
-            var fileName = ""
-            var fileExtension = ""
-            var fileUpload = ""
+            var storage = emptyMap<String, String>()
+            // Lo recorremos
             multipartData.forEachPart { part ->
+                // Analizamos el tipo si es fichero
                 when (part) {
                     is PartData.FormItem -> {
                         fileDescription = part.value
                     }
                     is PartData.FileItem -> {
-                        fileName = part.originalFileName as String
-                        fileExtension = fileName.substringAfterLast(".")
-                        fileUpload = UUID.randomUUID().toString() + "." + fileExtension
-                        var fileBytes = part.streamProvider().readBytes()
-                        File("$UPLOADS_DIR/$fileUpload").writeBytes(fileBytes)
+                        val fileName = part.originalFileName as String
+                        val fileBytes = part.streamProvider().readBytes()
+                        try {
+                            storage = Storage.saveFile(UPLOADS_DIR, fileName, fileBytes)
+                        } catch (e: Exception) {
+                            call.respond(
+                                HttpStatusCode.InternalServerError,
+                                ErrorResponse(HttpStatusCode.InternalServerError.value, "ERROR: ${e.message}")
+                            )
+                        }
                     }
                 }
                 part.dispose()
             }
             call.respond(
                 mapOf(
-                    "originalName" to fileName,
-                    "uploadName" to fileUpload,
-                    "url" to "$URL/rest/uploads/$fileUpload"
+                    "originalName" to storage["originalName"],
+                    "uploadName" to storage["uploadName"],
+                    "url" to "$URL/rest/uploads/${storage["uploadName"]}"
                 )
             )
         }
@@ -72,16 +82,35 @@ fun Route.uploadsRoutes() {
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed file name")
             )
-            val file = File("$UPLOADS_DIR/$fileName")
-            if (file.exists()) {
+            try {
+                val file = Storage.getFile(UPLOADS_DIR, fileName)
                 // De esta manera lo podria visiualizar el navegador
                 call.respondFile(file)
                 // si lo hago así me pide descargar
                 //call.response.header("Content-Disposition", "attachment; filename=\"${file.name}\"")
-            } else call.respond(
-                HttpStatusCode.NotFound,
-                ErrorResponse(HttpStatusCode.NotFound.value, "No file with name $fileName")
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No file with name $fileName")
+                )
+            }
+        }
+
+        // DELETE /rest/uploads/
+        delete("{fileName}") {
+            val fileName = call.parameters["fileName"] ?: return@delete call.respond(
+                HttpStatusCode.BadRequest,
+                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed file name")
             )
+            try {
+                Storage.deleteFile(UPLOADS_DIR, fileName)
+                call.respond(HttpStatusCode.OK, "File $fileName deleted")
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    ErrorResponse(HttpStatusCode.NotFound.value, "No file with name $fileName")
+                )
+            }
         }
     }
 }

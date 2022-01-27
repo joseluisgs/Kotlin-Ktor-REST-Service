@@ -137,6 +137,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GET ALL LIMIT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/customers?limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"customers"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -158,6 +184,32 @@
 							"path": [
 								"rest",
 								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET ALL LIMIT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/orders?limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								}
 							]
 						}
 					},
@@ -403,6 +455,27 @@
 								"rest",
 								"uploads",
 								"1c66b792-08a0-4895-a507-d508d928865d.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/uploads/0671fb3a-722d-412f-b63c-753763cf0385.json",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"uploads",
+								"0671fb3a-722d-412f-b63c-753763cf0385.json"
 							]
 						}
 					},

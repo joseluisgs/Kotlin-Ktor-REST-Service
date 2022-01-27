@@ -37,6 +37,7 @@ Servicio web para API REST con Kotlin y Ktor.
     - [Subida/Bajada de archivos](#subidabajada-de-archivos)
       - [Get/Download file by name](#getdownload-file-by-name)
       - [Post/Upload file](#postupload-file)
+      - [Delete file](#delete-file)
   - [PostMan](#postman)
   - [Autor](#autor)
     - [Contacto](#contacto)
@@ -141,7 +142,7 @@ post("/upload") {
 
 #### Get all customers
 ```http
-  GET /rest/customers
+  GET /rest/customers?limit={limit}
 ```
 
 #### Get customer by id
@@ -161,7 +162,7 @@ post("/upload") {
 
 #### Get all orders
 ```http
-  GET /rest/orders
+  GET /rest/orders?limit={limit}
 ```
 
 #### Get order by id
@@ -202,6 +203,11 @@ post("/upload") {
 #### Post/Upload file
 ```http
   POST /rest/uploads/
+```
+
+#### Delete file
+```http
+  DELETE /rest/uploads/{fileName}
 ```
 
 

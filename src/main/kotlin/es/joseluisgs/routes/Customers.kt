@@ -22,9 +22,11 @@ fun Route.customersRoutes() {
 
         // GET /rest/customers/
         get {
+            // Obtenemos el limite de registros a devolver
+            val limit = call.request.queryParameters["limit"]?.toIntOrNull()
             // Si no es vacio devuelve todos los customers
             if (!Customers.isEmpty()) {
-                call.respond(Customers.getAll())
+                call.respond(Customers.getAll(limit))
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
@@ -97,7 +99,7 @@ fun Route.customersRoutes() {
                 HttpStatusCode.BadRequest,
                 ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
             )
-            
+
             if (Customers.delete(id)) {
                 call.respond(HttpStatusCode.Accepted)
             } else {

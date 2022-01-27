@@ -23,7 +23,9 @@ fun Route.ordersRoutes() {
         // GET /rest/orders/
         get {
             if (!Orders.isEmpty()) {
-                call.respond(Orders.getAll())
+                // Obtenemos el limite de registros a devolver
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull()
+                call.respond(Orders.getAll(limit))
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,

@@ -47,7 +47,7 @@ object Orders : CrudRepository<Order, String> {
 
     fun isEmpty() = orders.isEmpty()
 
-    override fun getAll() = orders.toList()
+    override fun getAll(limit: Int?): List<Order> = if (limit == null) orders else orders.take(limit)
 
     override fun getById(id: String) = orders.find { it.id == id }
 

@@ -19,6 +19,7 @@ Servicio web para API REST con Kotlin y Ktor.
       - [Parámetros de consulta](#parámetros-de-consulta)
       - [Parámetros de cuerpo](#parámetros-de-cuerpo)
       - [Peticiones multiparte](#peticiones-multiparte)
+    - [Autenticación y Autorización](#autenticación-y-autorización)
   - [Referencia API REST](#referencia-api-rest)
     - [Recurso Customers](#recurso-customers)
       - [Get all customers](#get-all-customers)
@@ -38,6 +39,11 @@ Servicio web para API REST con Kotlin y Ktor.
       - [Get/Download file by name](#getdownload-file-by-name)
       - [Post/Upload file](#postupload-file)
       - [Delete file](#delete-file)
+    - [Recursos Autenticados](#recursos-autenticados)
+      - [Login user.](#login-user)
+      - [Register](#register)
+      - [Me](#me)
+      - [Get all Users](#get-all-users)
   - [PostMan](#postman)
   - [Autor](#autor)
     - [Contacto](#contacto)
@@ -135,6 +141,33 @@ post("/upload") {
     call.respondText("$fileName is uploaded to 'uploads/$fileName'")
 }
 ```
+### Autenticación y Autorización
+Podemos implementar métodos de [autenticación y autorización](https://ktor.io/docs/authentication.html) variados con Ktor. Este ejemplo se ha procedido a usar [JWT Tokens](https://jwt.io/).
+Para ello se ha instalado las [librerías necesarias](https://ktor.io/docs/jwt.html#add_dependencies) para el procesamiento de tokens JWT. Los parámetros para generar el token se han configurado en el [fichero de configuración](./src/main/resources/application.conf). Debemos tener en cuenta algunos parámetros para proteger y verificar los tokens, así como su tiempo de vida.
+Posteriormente lo instalamos como un plugin más en la configuración de la aplicación. Podemos configurar su verificador y ademas validar el payload para analizar que el cuerpo del token es válido, tal y como se indica el la [documentación de Ktor](https://ktor.io/docs/jwt.html).
+```kotlin
+install(Authentication) {
+    jwt {
+        // Configure jwt authentication
+    }
+}
+```
+Por otro lado, cuando nos logueamos, podemos generar el token y devolverlo al usuario, en base a los parámetros de configuración.
+
+Para proteger ls rutas usamos la función athenticate. Cualquier ruta dentro de ella quedará protegida por la autenticación. Además si leemos en el Payload el usuario y administramos alguna política de permisos, podemos verificar que el usuario tiene permisos para acceder a la ruta.
+```kotlin
+routing {
+    authenticate("auth-jwt") {
+        get("/hello") {
+            val principal = call.principal<JWTPrincipal>()
+            val username = principal!!.payload.getClaim("username").asString()
+            val expiresAt = principal.expiresAt?.time?.minus(System.currentTimeMillis())
+            call.respondText("Hello, $username! Token is expired at $expiresAt ms.")
+        }
+    }
+}
+```
+
 
 ## Referencia API REST
 
@@ -210,6 +243,26 @@ post("/upload") {
   DELETE /rest/uploads/{fileName}
 ```
 
+### Recursos Autenticados
+#### Login user.
+```http
+  <!-- Return a JWT Token -->
+  POST /rest/auth/login
+```
+#### Register
+```http
+  POST /rest/auth/register
+```
+#### Me
+```http
+  <!-- Needs a JWT Token -->
+  GET /rest/auth/me
+```
+#### Get all Users
+```http
+  <!-- Needs a JWT Token and ADMIN Role -->
+  GET /rest/auth/users
+```
 
 ## PostMan
 Puedes consumir el servicio REST con PostMan. Para ello solo debes importar la [colección de ejemplo](./postman/Kotlin-Ktor-REST-Service.postman_collection.json) y ejecutar las mismas.

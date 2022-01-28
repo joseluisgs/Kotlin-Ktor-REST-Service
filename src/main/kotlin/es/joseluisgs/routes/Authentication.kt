@@ -1,5 +1,6 @@
 package es.joseluisgs.routes
 
+import es.joseluisgs.models.Role
 import es.joseluisgs.models.User
 import es.joseluisgs.repositories.Users
 import es.joseluisgs.services.TokenManager
@@ -74,8 +75,9 @@ fun Route.autheticationRoutes() {
 
         }
 
-        // Estas rutas están autenticadas y autorizadas
+        // Estas rutas están autenticadas --> Protegidas por JWT
         authenticate {
+
             get("/me") {
                 // Por el token me llega como principal (autenticado) el usuario en sus claims
                 val principle = call.principal<JWTPrincipal>()
@@ -91,19 +93,27 @@ fun Route.autheticationRoutes() {
                     )
                 )
             }
-        }
 
-        // GET /rest/auth/users --> Solo si eres Admin, puedes ver todos los usuarios
-        get("/users") {
-            if (!Users.isEmpty()) {
-                // Obtenemos el limite de registros a devolver
-                val limit = call.request.queryParameters["limit"]?.toIntOrNull()
-                call.respond(Users.getAll(limit))
-            } else {
-                call.respond(
-                    HttpStatusCode.NotFound,
-                    mapOf("error" to "No orders found")
-                )
+            // GET /rest/auth/users --> Solo si eres Admin, puedes ver todos los usuarios
+            get("/users") {
+                val principle = call.principal<JWTPrincipal>()
+                val username = principle!!.payload.getClaim("username").asString()
+                val userId = principle.payload.getClaim("userId").asString()
+                val user = Users.findById(userId)
+                if (user?.role == Role.ADMIN) {
+                    if (!Users.isEmpty()) {
+                        // Obtenemos el limite de registros a devolver
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull()
+                        call.respond(Users.getAll(limit))
+                    } else {
+                        call.respond(
+                            HttpStatusCode.NotFound,
+                            mapOf("error" to "No orders found")
+                        )
+                    }
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "You are not authorized"))
+                }
             }
         }
     }

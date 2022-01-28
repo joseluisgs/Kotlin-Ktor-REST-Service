@@ -174,92 +174,92 @@ routing {
 ### Recurso Customers
 
 #### Get all customers
-```http
+```
   GET /rest/customers?limit={limit}
 ```
 
 #### Get customer by id
-```http
+```
   GET /rest/customers/{id}
 ```
 #### Update customer by id
-```http
+```
   PUT /rest/customers/{id}
 ```
 #### Delete customer by id
-```http
+```
   DELETE /rest/customers/{id}
 ```
 
 ### Recurso Orders
 
 #### Get all orders
-```http
+```
   GET /rest/orders?limit={limit}
 ```
 
 #### Get order by id
-```http
+```
   GET /rest/orders/{id}
 ```
 #### Update order by id
-```http
+```
   PUT /rest/orders/{id}
 ```
 #### Delete order by id
-```http
+```
   DELETE /rest/orders/{id}
 ```
 #### Get contents by order id
-```http
+```
   GET /rest/orders/{id}
 ```
 #### Get contents by order id
-```http
+```
   GET /rest/orders/{id}/contents
 ```
 #### Get total by order id
-```http
+```
   GET /rest/orders/{id}/total
 ```
 #### Get customer by order id
-```http
+```
   GET /rest/orders/{id}/customer
 ```
 
 ### Subida/Bajada de archivos
 #### Get/Download file by name
-```http
+```
   GET /rest/uploads/{fileName}
 ```
 
 #### Post/Upload file
-```http
+```
   POST /rest/uploads/
 ```
 
 #### Delete file
-```http
+```
   DELETE /rest/uploads/{fileName}
 ```
 
 ### Recursos Autenticados
 #### Login user.
-```http
+```
   <!-- Return a JWT Token -->
   POST /rest/auth/login
 ```
 #### Register
-```http
+```
   POST /rest/auth/register
 ```
 #### Me
-```http
+```
   <!-- Needs a JWT Token -->
   GET /rest/auth/me
 ```
 #### Get all Users
-```http
+```
   <!-- Needs a JWT Token and ADMIN Role -->
   GET /rest/auth/users
 ```

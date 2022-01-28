@@ -1,10 +1,13 @@
 package es.joseluisgs.services
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.util.*
 
 object Storage {
-    fun saveFile(
+    suspend fun saveFile(
         pathName: String,
         fileName: String,
         fileBytes: ByteArray,
@@ -12,7 +15,10 @@ object Storage {
         val fileExtension = fileName.substringAfterLast(".")
         val fileUpload = UUID.randomUUID().toString() + "." + fileExtension
         try {
-            File("$pathName/$fileUpload").writeBytes(fileBytes)
+            coroutineScope {
+                val file = async(Dispatchers.IO) { File("$pathName/$fileUpload").writeBytes(fileBytes) }
+                file.await()
+            }
             return mapOf(
                 "originalName" to fileName,
                 "uploadName" to fileUpload

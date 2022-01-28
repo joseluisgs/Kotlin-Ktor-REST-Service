@@ -29,6 +29,32 @@
 					"response": []
 				},
 				{
+					"name": "GET ALL LIMIT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/customers?limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"customers"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GET BY ID",
 					"request": {
 						"method": "GET",
@@ -133,32 +159,6 @@
 								"rest",
 								"customers",
 								"5"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET ALL LIMIT",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:6969/rest/customers?limit=2",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "6969",
-							"path": [
-								"rest",
-								"customers"
-							],
-							"query": [
-								{
-									"key": "limit",
-									"value": "2"
-								}
 							]
 						}
 					},
@@ -476,6 +476,175 @@
 								"rest",
 								"uploads",
 								"0671fb3a-722d-412f-b63c-753763cf0385.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "REGISTER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"register\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USERS",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo2OTY5L2F1dGgiLCJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjY5NjkvIiwiZXhwIjoxNjQzMzk3MzM2LCJ1c2VySWQiOiIyIiwidXNlcm5hbWUiOiJ1c2VyIn0.5VaVnvzkC2Flr8vbN0Pmv2bW6OTwMiuzL_NHpu4omCA9l2sdBU2wUuAEfdgLVtqWjuMk1sHxdaHoM4WPj-ymzQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"register_test\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/auth/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"auth",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN ADMIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:6969/rest/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ME (Token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJodHRwOi8vMC4wLjAuMDo2OTY5L2F1dGgiLCJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjY5NjkvIiwiZXhwIjoxNjQzMzk2MjU2LCJ1c2VySWQiOiIxIiwidXNlcm5hbWUiOiJhZG1pbiJ9.134rOn_gDZrwJa3I6W-65SS1DXjJvp3686zPspeXnocQsz7rOmQ655k_yO8PJTy8Y8ZJXZKtJ9TDe5sv3kr6QQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/auth/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"auth",
+								"me"
 							]
 						}
 					},

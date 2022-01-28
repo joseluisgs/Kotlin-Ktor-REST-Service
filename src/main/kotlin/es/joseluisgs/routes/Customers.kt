@@ -22,16 +22,10 @@ fun Route.customersRoutes() {
         // GET /rest/customers/
         get {
             // Obtenemos el limite de registros a devolver
-            val limit = call.request.queryParameters["limit"]?.toIntOrNull()
+            var limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 0
             // Si no es vacio devuelve todos los customers
-            if (!Customers.isEmpty()) {
-                call.respond(Customers.getAll(limit))
-            } else {
-                call.respond(
-                    HttpStatusCode.NotFound,
-                    mapOf("error" to "No customers found")
-                )
-            }
+            limit = if (limit < 0) 0 else limit
+            call.respond(Customers.getAll(limit))
         }
 
         // GET /rest/customers/{id}

@@ -20,7 +20,7 @@ object Customers : CrudRepository<Customer, String> {
 
     fun isEmpty() = customers.isEmpty()
 
-    override fun getAll(limit: Int?): List<Customer> = if (limit == null) customers else customers.take(limit)
+    override fun getAll(limit: Int): List<Customer> = if (limit == 0) customers else customers.take(limit)
 
     override fun getById(id: String) = customers.find { it.id == id }
 

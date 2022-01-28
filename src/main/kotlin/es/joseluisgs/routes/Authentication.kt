@@ -81,9 +81,8 @@ fun Route.autheticationRoutes() {
             get("/me") {
                 // Por el token me llega como principal (autenticado) el usuario en sus claims
                 val principle = call.principal<JWTPrincipal>()
-                val username = principle!!.payload.getClaim("username").asString()
-                val userId = principle.payload.getClaim("userId").asString()
-                val user = Users.findById(userId)
+                val user = getUserFromJWT(principle)
+
                 call.respond(
                     HttpStatusCode.OK,
                     mapOf(
@@ -97,12 +96,10 @@ fun Route.autheticationRoutes() {
             // GET /rest/auth/users --> Solo si eres Admin, puedes ver todos los usuarios
             get("/users") {
                 val principle = call.principal<JWTPrincipal>()
-                val username = principle!!.payload.getClaim("username").asString()
-                val userId = principle.payload.getClaim("userId").asString()
-                val user = Users.findById(userId)
+                val user = getUserFromJWT(principle)
                 if (user?.role == Role.ADMIN) {
                     if (!Users.isEmpty()) {
-                        // Obtenemos el limite de registros a devolver
+                        // Obtenemos el límite de registros a devolver
                         val limit = call.request.queryParameters["limit"]?.toIntOrNull()
                         call.respond(Users.getAll(limit))
                     } else {
@@ -117,4 +114,11 @@ fun Route.autheticationRoutes() {
             }
         }
     }
+}
+
+
+private fun getUserFromJWT(principle: JWTPrincipal?): User? {
+    val username = principle!!.payload.getClaim("username").asString()
+    val userId = principle.payload.getClaim("userId").asString()
+    return Users.findById(userId)
 }

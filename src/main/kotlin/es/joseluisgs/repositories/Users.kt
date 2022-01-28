@@ -45,8 +45,10 @@ object Users {
 
     fun getAll(limit: Int?): List<User> = if (limit == null) users else users.take(limit)
 
-    fun checkUserNameAndPassword(username: String, password: String): Boolean {
+    fun checkUserNameAndPassword(username: String, password: String): User? {
         val user = findByUsername(username)
-        return user != null && BCrypt.checkpw(password, user.password)
+        return if (user != null && BCrypt.checkpw(password, user.password)) user
+        else null
+
     }
 }

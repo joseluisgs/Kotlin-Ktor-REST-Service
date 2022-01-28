@@ -3,12 +3,14 @@ package es.joseluisgs.routes
 import es.joseluisgs.error.ErrorResponse
 import es.joseluisgs.models.User
 import es.joseluisgs.repositories.Users
+import es.joseluisgs.services.TokenManager
 import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import java.util.*
 
 // Extiendo Application
 fun Application.authenticationRoutes() {
@@ -47,7 +49,7 @@ fun Route.autheticationRoutes() {
         }
 
         post("/login") {
-            lateinit var user: User
+            var user: User?
             try {
                 user = call.receive()
             } catch (e: Exception) {
@@ -58,7 +60,7 @@ fun Route.autheticationRoutes() {
             }
 
             // Comprobamos las credenciales
-            if (!Users.isValidCredentials(user.username, user.password)) {
+            if (!Users.isValidCredentials(user!!.username, user!!.password)) {
                 return@post call.respond(
                     HttpStatusCode.BadRequest,
                     ErrorResponse(
@@ -69,15 +71,33 @@ fun Route.autheticationRoutes() {
             }
 
             // buscamos el usuario
-            if (Users.checkUserNameAndPassword(user.username, user.password)) {
-                // Si es correcto devolvemos el token
-                call.respond(HttpStatusCode.OK, mapOf("token" to UUID.randomUUID().toString()))
-            } else {
-                return@post call.respond(
-                    HttpStatusCode.NotFound,
-                    ErrorResponse(
-                        HttpStatusCode.BadRequest.value,
-                        "Invalid Username or Password"
+            user = Users.checkUserNameAndPassword(user!!.username, user!!.password)
+            // Si es correcto generamos el token y lo devolvemos, si es el usuario nulo, es error
+            val token = user?.let { u -> TokenManager.generateJWTToken(u) } ?: return@post call.respond(
+                HttpStatusCode.NotFound,
+                ErrorResponse(
+                    HttpStatusCode.BadRequest.value,
+                    "Invalid Username or Password"
+                )
+            )
+            call.respond(HttpStatusCode.OK, mapOf("token" to token))
+
+        }
+
+        // Estas rutas están autenticadas y autorizadas
+        authenticate {
+            get("/me") {
+                // Por el token me llega como principal (autenticado) el usuario en sus claims
+                val principle = call.principal<JWTPrincipal>()
+                val username = principle!!.payload.getClaim("username").asString()
+                val userId = principle.payload.getClaim("userId").asString()
+                val user = Users.findById(userId)
+                call.respond(
+                    HttpStatusCode.OK,
+                    mapOf(
+                        "id" to user?.id,
+                        "username" to user?.username,
+                        "role" to user?.role.toString()
                     )
                 )
             }

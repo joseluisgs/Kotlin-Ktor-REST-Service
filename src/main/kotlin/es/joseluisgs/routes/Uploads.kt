@@ -9,6 +9,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import java.io.File
+import java.time.LocalDateTime
 
 var UPLOADS_DIR = "uploads"
 var URL = ""
@@ -71,6 +72,7 @@ fun Route.uploadsRoutes() {
                 mapOf(
                     "originalName" to storage["originalName"],
                     "uploadName" to storage["uploadName"],
+                    "createdAt" to LocalDateTime.now().toString(),
                     "url" to "$URL/rest/uploads/${storage["uploadName"]}"
                 )
             )

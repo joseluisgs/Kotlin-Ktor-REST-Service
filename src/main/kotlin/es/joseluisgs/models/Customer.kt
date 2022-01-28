@@ -10,5 +10,5 @@ data class Customer(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val date: String = LocalDateTime.now().toString(),
+    val createdAt: String = LocalDateTime.now().toString()
 )

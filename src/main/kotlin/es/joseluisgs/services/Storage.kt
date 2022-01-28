@@ -15,7 +15,7 @@ object Storage {
             File("$pathName/$fileUpload").writeBytes(fileBytes)
             return mapOf(
                 "originalName" to fileName,
-                "uploadName" to fileUpload,
+                "uploadName" to fileUpload
             )
         } catch (e: Exception) {
             throw Exception("Error saving file")

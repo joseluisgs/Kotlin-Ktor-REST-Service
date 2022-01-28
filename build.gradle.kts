@@ -37,6 +37,11 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     // Poder serializar usando Kotlin serialization
     implementation("io.ktor:ktor-serialization:$ktor_version")
+    // Auth para Ktor con JWT
+    implementation("io.ktor:ktor-auth:$ktor_version")
+    implementation("io.ktor:ktor-auth-jwt:$ktor_version")
+    // BCrypt para Password Hashing
+    implementation("org.mindrot:jbcrypt:0.4")
 
     // Utilizades para test
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")

@@ -1,9 +1,6 @@
 package es.joseluisgs
 
-import es.joseluisgs.routes.customersRoutes
-import es.joseluisgs.routes.ordersRoutes
-import es.joseluisgs.routes.uploadsRoutes
-import es.joseluisgs.routes.webRoutes
+import es.joseluisgs.routes.*
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.response.*
@@ -39,4 +36,5 @@ fun Application.module() {
     customersRoutes()
     ordersRoutes()
     uploadsRoutes()
+    authenticationRoutes()
 }

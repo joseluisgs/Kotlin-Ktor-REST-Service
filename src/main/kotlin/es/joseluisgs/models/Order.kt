@@ -11,7 +11,7 @@ import java.util.*
 data class Order(
     var id: String = UUID.randomUUID().toString(),
     val customerID: String,
-    val date: String = LocalDateTime.now().toString(),
+    val createdAt: String = LocalDateTime.now().toString(),
     val contents: List<OrderItem>
 ) {
     constructor(id: String, customerID: String, contents: List<OrderItem>) : this(

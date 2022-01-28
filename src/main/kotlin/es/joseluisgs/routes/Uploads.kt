@@ -1,6 +1,5 @@
 package es.joseluisgs.routes
 
-import es.joseluisgs.error.ErrorResponse
 import es.joseluisgs.services.Storage
 import io.ktor.application.*
 import io.ktor.http.*
@@ -61,7 +60,7 @@ fun Route.uploadsRoutes() {
                         } catch (e: Exception) {
                             call.respond(
                                 HttpStatusCode.InternalServerError,
-                                ErrorResponse(HttpStatusCode.InternalServerError.value, "ERROR: ${e.message}")
+                                mapOf("error" to "ERROR: ${e.message}")
                             )
                         }
                     }
@@ -82,7 +81,7 @@ fun Route.uploadsRoutes() {
         get("{fileName}") {
             val fileName = call.parameters["fileName"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed file name")
+                mapOf("error" to "Missing or malformed file name")
             )
             try {
                 val file = Storage.getFile(UPLOADS_DIR, fileName)
@@ -93,7 +92,7 @@ fun Route.uploadsRoutes() {
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No file with name $fileName")
+                    mapOf("error" to "No file with name $fileName")
                 )
             }
         }
@@ -102,7 +101,7 @@ fun Route.uploadsRoutes() {
         delete("{fileName}") {
             val fileName = call.parameters["fileName"] ?: return@delete call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed file name")
+                mapOf("error" to "Missing or malformed file name")
             )
             try {
                 Storage.deleteFile(UPLOADS_DIR, fileName)
@@ -110,7 +109,7 @@ fun Route.uploadsRoutes() {
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No file with name $fileName")
+                    mapOf("error" to "No file with name $fileName")
                 )
             }
         }

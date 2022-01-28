@@ -1,6 +1,5 @@
 package es.joseluisgs.routes
 
-import es.joseluisgs.error.ErrorResponse
 import es.joseluisgs.models.Order
 import es.joseluisgs.repositories.Orders
 import io.ktor.application.*
@@ -29,7 +28,7 @@ fun Route.ordersRoutes() {
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No orders found")
+                    mapOf("error" to "No orders found")
                 )
             }
         }
@@ -40,13 +39,13 @@ fun Route.ordersRoutes() {
             // si no saldríamos del metodo prinicipal y porque usamos call
             val id = call.parameters["id"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             val order =
                 Orders.getById(id) ?: return@get call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                    mapOf("error" to "No order with id $id")
                 )
 
             call.respond(order)
@@ -56,7 +55,7 @@ fun Route.ordersRoutes() {
         put("{id}") {
             val id = call.parameters["id"] ?: return@put call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             try {
@@ -66,13 +65,13 @@ fun Route.ordersRoutes() {
                 } else {
                     call.respond(
                         HttpStatusCode.NotFound,
-                        ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                        mapOf("error" to "No order with id $id")
                     )
                 }
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
+                    mapOf("error" to "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
         }
@@ -86,7 +85,7 @@ fun Route.ordersRoutes() {
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
+                    mapOf("error" to "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
         }
@@ -95,7 +94,7 @@ fun Route.ordersRoutes() {
         delete("{id}") {
             val id = call.parameters["id"] ?: return@delete call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             if (Orders.delete(id)) {
@@ -103,7 +102,7 @@ fun Route.ordersRoutes() {
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                    mapOf("error" to "No order with id $id")
                 )
             }
         }
@@ -112,13 +111,13 @@ fun Route.ordersRoutes() {
         get("{id}/contents") {
             val id = call.parameters["id"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             val contents =
                 Orders.getContents(id) ?: return@get call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                    mapOf("error" to "No order with id $id")
                 )
 
             call.respond(contents)
@@ -128,13 +127,13 @@ fun Route.ordersRoutes() {
         get("{id}/total") {
             val id = call.parameters["id"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             val total =
                 Orders.getTotal(id) ?: return@get call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                    mapOf("error" to "No order with id $id")
                 )
 
 
@@ -145,13 +144,13 @@ fun Route.ordersRoutes() {
         get("{id}/customer") {
             val id = call.parameters["id"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             val customer =
                 Orders.getCustomer(id) ?: return@get call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No order with id $id")
+                    mapOf("error" to "No order with id $id")
                 )
 
             call.respond(customer)

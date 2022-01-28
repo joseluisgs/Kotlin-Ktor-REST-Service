@@ -1,6 +1,5 @@
 package es.joseluisgs.routes
 
-import es.joseluisgs.error.ErrorResponse
 import es.joseluisgs.models.User
 import es.joseluisgs.repositories.Users
 import es.joseluisgs.services.TokenManager
@@ -31,7 +30,7 @@ fun Route.autheticationRoutes() {
             } catch (e: Exception) {
                 return@post call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
+                    mapOf("error" to "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
             // Son buenos nuestros datos de registro
@@ -40,10 +39,7 @@ fun Route.autheticationRoutes() {
             } else {
                 return@post call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(
-                        HttpStatusCode.BadRequest.value,
-                        "Bad Credentials. Username exists or username >= 3 long && password >= 6 long"
-                    )
+                    mapOf("error" to "Bad Credentials. Username exists or username >= 3 long && password >= 6 long")
                 )
             }
         }
@@ -55,7 +51,7 @@ fun Route.autheticationRoutes() {
             } catch (e: Exception) {
                 return@post call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
+                    mapOf("error" to "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
 
@@ -63,10 +59,7 @@ fun Route.autheticationRoutes() {
             if (!Users.isValidCredentials(user!!.username, user!!.password)) {
                 return@post call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(
-                        HttpStatusCode.BadRequest.value,
-                        "Bad Credentials.  username >= 3 long && password >= 6 long"
-                    )
+                    mapOf("error" to "Bad Credentials.  username >= 3 long && password >= 6 long")
                 )
             }
 
@@ -75,10 +68,7 @@ fun Route.autheticationRoutes() {
             // Si es correcto generamos el token y lo devolvemos, si es el usuario nulo, es error
             val token = user?.let { u -> TokenManager.generateJWTToken(u) } ?: return@post call.respond(
                 HttpStatusCode.NotFound,
-                ErrorResponse(
-                    HttpStatusCode.BadRequest.value,
-                    "Invalid Username or Password"
-                )
+                mapOf("error" to "Invalid Username or Password")
             )
             call.respond(HttpStatusCode.OK, mapOf("token" to token))
 
@@ -112,7 +102,7 @@ fun Route.autheticationRoutes() {
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No orders found")
+                    mapOf("error" to "No orders found")
                 )
             }
         }

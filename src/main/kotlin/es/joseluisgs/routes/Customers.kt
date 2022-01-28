@@ -1,6 +1,5 @@
 package es.joseluisgs.routes
 
-import es.joseluisgs.error.ErrorResponse
 import es.joseluisgs.models.Customer
 import es.joseluisgs.repositories.Customers
 import io.ktor.application.*
@@ -30,7 +29,7 @@ fun Route.customersRoutes() {
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No customers found")
+                    mapOf("error" to "No customers found")
                 )
             }
         }
@@ -41,14 +40,14 @@ fun Route.customersRoutes() {
             // si no saldríamos del metodo prinicipal y porque usamos call
             val id = call.parameters["id"] ?: return@get call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             // Buscamos el cliente con el id pasado, si no está devolvemos el error
             val customer =
                 Customers.getById(id) ?: return@get call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No customer with id $id")
+                    mapOf("error" to "No customer with id $id")
                 )
 
             call.respond(customer)
@@ -58,7 +57,7 @@ fun Route.customersRoutes() {
         put("{id}") {
             val id = call.parameters["id"] ?: return@put call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             try {
@@ -68,13 +67,13 @@ fun Route.customersRoutes() {
                 } else {
                     call.respond(
                         HttpStatusCode.NotFound,
-                        ErrorResponse(HttpStatusCode.NotFound.value, "No customer with id $id")
+                        mapOf("error" to "No customer with id $id")
                     )
                 }
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
+                    mapOf("error" to "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
         }
@@ -88,7 +87,7 @@ fun Route.customersRoutes() {
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    ErrorResponse(HttpStatusCode.BadRequest.value, "Bad JSON Data Body: ${e.message.toString()}")
+                    mapOf("error" to "Bad JSON Data Body: ${e.message.toString()}")
                 )
             }
         }
@@ -97,7 +96,7 @@ fun Route.customersRoutes() {
         delete("{id}") {
             val id = call.parameters["id"] ?: return@delete call.respond(
                 HttpStatusCode.BadRequest,
-                ErrorResponse(HttpStatusCode.BadRequest.value, "Missing or malformed id")
+                mapOf("error" to "Missing or malformed id")
             )
 
             if (Customers.delete(id)) {
@@ -105,7 +104,7 @@ fun Route.customersRoutes() {
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    ErrorResponse(HttpStatusCode.NotFound.value, "No customer with id $id")
+                    mapOf("error" to "No customer with id $id")
                 )
             }
         }

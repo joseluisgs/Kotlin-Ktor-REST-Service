@@ -36,7 +36,7 @@ fun Route.autheticationRoutes() {
             }
             // Son buenos nuestros datos de registro
             if (Users.save(user)) {
-                call.respond(HttpStatusCode.OK, user.toMap())
+                call.respond(HttpStatusCode.OK, user.toResponse())
             } else {
                 return@post call.respond(
                     HttpStatusCode.BadRequest,
@@ -101,7 +101,7 @@ fun Route.autheticationRoutes() {
                     if (!Users.isEmpty()) {
                         // Obtenemos el límite de registros a devolver
                         val limit = call.request.queryParameters["limit"]?.toIntOrNull()
-                        call.respond(Users.getAll(limit))
+                        call.respond(Users.getAll(limit).map { it.toResponse() })
                     } else {
                         call.respond(
                             HttpStatusCode.NotFound,

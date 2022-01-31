@@ -2,17 +2,17 @@ package es.joseluisgs.models
 
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
-import java.util.*
 
 @Serializable
 data class User(
-    var id: String = UUID.randomUUID().toString(),
+    var id: String = "",
     var username: String,
     var password: String,
     val role: Role = Role.USER,
     val createdAt: String = LocalDateTime.now().toString(),
 ) {
-    fun toMap(): Map<String, String> {
+    // Para quitar el Password
+    fun toResponse(): Map<String, String> {
         return mapOf(
             "id" to id,
             "username" to username,
@@ -22,6 +22,3 @@ data class User(
     }
 }
 
-enum class Role {
-    USER, ADMIN
-}

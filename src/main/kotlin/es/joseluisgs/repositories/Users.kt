@@ -1,54 +1,66 @@
 package es.joseluisgs.repositories
 
-import es.joseluisgs.models.Role
+import es.joseluisgs.entities.Users
+import es.joseluisgs.entities.UsersTable
 import es.joseluisgs.models.User
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
-import java.util.*
+import java.time.LocalDateTime
 
 object Users {
-    // Password 123456 en BCrypt
-    val users = mutableListOf(
-        User(
-            "1", "admin",
-            "\$2a\$10\$C3NO0nKdVaAdAi8cE18GA.ExGbYUPyNOrXKC.Clu/xtWdHCJiZ4hq",
-            Role.ADMIN
-        ),
-        User(
-            "2", "user",
-            "\$2a\$10\$EB7BKG0b6OJp55YGwd0lVe/0Ys08y1LQmgrIhnweYTNHNF5PdzBn6",
-            Role.USER
-        )
-    )
 
-    fun findByUsername(username: String) = users.find { it.username == username }
+    fun findByUsername(username: String) = transaction {
+        // addLogger(StdOutSqlLogger)
+        Users.find { UsersTable.username eq username }.firstOrNull()?.toUser()
+    }
 
-    fun findById(id: String) = users.find { it.id == id }
+    fun findById(id: String) = transaction {
+        // addLogger(StdOutSqlLogger)
+        Users.findById(id.toLong())?.toUser()
+    }
 
     fun hashedPassword(password: String) = BCrypt.hashpw(password, BCrypt.gensalt())
 
     fun isValidCredentials(username: String, password: String) = username.length >= 3 && password.length >= 6
 
-    fun save(user: User): Boolean {
+    fun save(user: User): Boolean = transaction {
         //Credenciales correctas y no existe ese usario en el sistema
-        return if (isValidCredentials(user.username, user.password) && findByUsername(user.username) == null) {
+        // addLogger(StdOutSqlLogger)
+        if (isValidCredentials(
+                user.username,
+                user.password
+            ) && findByUsername(user.username) == null
+        ) {
             user.username = user.username.lowercase()
-            user.password = Users.hashedPassword(user.password)
-            user.id = UUID.randomUUID().toString()
-            users.add(user)
+            user.password = hashedPassword(user.password)
+
+            user.id = Users.new {
+                username = user.username
+                password = user.password
+                role = user.role.toString()
+                createdAt = LocalDateTime.parse(user.createdAt)
+            }.id.toString()
             true
         } else {
             false
         }
     }
 
-    fun isEmpty() = users.isEmpty()
+    fun isEmpty() = transaction {
+        // addLogger(StdOutSqlLogger)
+        Users.all().empty()
+    }
 
-    fun getAll(limit: Int?): List<User> = if (limit == null) users else users.take(limit)
+    fun getAll(limit: Int?): List<User> = transaction {
+        // addLogger(StdOutSqlLogger)
+        val response = if (limit == null) Users.all() else Users.all().limit(limit)
+        return@transaction response.map { it.toUser() }
+    }
 
-    fun checkUserNameAndPassword(username: String, password: String): User? {
+    fun checkUserNameAndPassword(username: String, password: String): User? = transaction {
+        // addLogger(StdOutSqlLogger)
         val user = findByUsername(username)
-        return if (user != null && BCrypt.checkpw(password, user.password)) user
+        return@transaction if (user != null && BCrypt.checkpw(password, user.password)) user
         else null
-
     }
 }

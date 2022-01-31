@@ -56,6 +56,7 @@ dependencies {
     // Para manejar un pool de conexions mega rápido con HikariCP (no es obligatorio)
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.1.20")
 
     // Utilizades para test
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")

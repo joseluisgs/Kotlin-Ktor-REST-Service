@@ -1,7 +1,8 @@
 package es.joseluisgs
 
+import es.joseluisgs.controller.DataBaseManager
+import es.joseluisgs.controller.TokenManager
 import es.joseluisgs.routes.*
-import es.joseluisgs.services.TokenManager
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -23,7 +24,52 @@ fun Application.module() {
 
     // Instalación de plugins y configuraciones
 
+    // Base de datos
+    initDataBase()
+
     // JWT token. Instalamos el plugin
+    initAuthentication()
+
+    // Negocacion de contenidos en JSON
+    initContentNegotiation()
+
+    // Comenzamos a registrar las rutas
+    initRoutes(presentacion, mode)
+}
+
+
+/**
+ * Rutas principales del Servicio
+ */
+private fun Application.initRoutes(presentacion: String, mode: String) {
+    routing {
+        // Entrada en la api
+        get("/") {
+            call.respondText("$presentacion en modo $mode")
+        }
+    }
+
+    // Registramos las rutas de la aplicación o controladores de rutas
+    webRoutes()
+    customersRoutes()
+    ordersRoutes()
+    uploadsRoutes()
+    authenticationRoutes()
+}
+
+/**
+ * Inicia el plugin de negocacion en JSON
+ */
+private fun Application.initContentNegotiation() {
+    install(ContentNegotiation) {
+        json()
+    }
+}
+
+/**
+ * Instalamos el plugin de autenticación y configuramos JWT
+ */
+private fun Application.initAuthentication() {
     install(Authentication) {
         // Iniciamos con los datos el TokenManager
         TokenManager.init(
@@ -50,24 +96,17 @@ fun Application.module() {
             }
         }
     }
+}
 
-    // Negocacion de contenidos en JSON
-    install(ContentNegotiation) {
-        json()
-    }
-
-    // Comenzamos a registrar las rutas
-    routing {
-        // Entrada en la api
-        get("/") {
-            call.respondText("$presentacion en modo $mode")
-        }
-    }
-
-    // Registramos las rutas de la aplicación
-    webRoutes()
-    customersRoutes()
-    ordersRoutes()
-    uploadsRoutes()
-    authenticationRoutes()
+/**
+ * Iniciamos la configuración de Base de Datos
+ */
+private fun Application.initDataBase() {
+    DataBaseManager.init(
+        environment.config.property("database.jdbcUrl").getString(),
+        environment.config.property("database.driverClassName").getString(),
+        environment.config.property("database.username").getString(),
+        environment.config.property("database.password").getString(),
+        environment.config.property("database.maximumPoolSize").getString().toInt()
+    )
 }

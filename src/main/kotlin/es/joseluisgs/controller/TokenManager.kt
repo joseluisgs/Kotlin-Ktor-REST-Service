@@ -1,4 +1,4 @@
-package es.joseluisgs.services
+package es.joseluisgs.controller
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
@@ -19,10 +19,10 @@ object TokenManager {
     private var expirationDate: Long = 0
 
     fun init(audience: String, secret: String, issuer: String, expirationDate: Long) {
-        this.audience = audience
-        this.secret = secret
-        this.issuer = issuer
-        this.expirationDate = System.currentTimeMillis() + 1000 * expirationDate
+        TokenManager.audience = audience
+        TokenManager.secret = secret
+        TokenManager.issuer = issuer
+        TokenManager.expirationDate = System.currentTimeMillis() + 1000 * expirationDate
     }
 
     fun generateJWTToken(user: User): String {

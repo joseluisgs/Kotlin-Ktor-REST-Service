@@ -1,9 +1,9 @@
 package es.joseluisgs.routes
 
+import es.joseluisgs.controller.TokenManager
 import es.joseluisgs.models.Role
 import es.joseluisgs.models.User
 import es.joseluisgs.repositories.Users
-import es.joseluisgs.services.TokenManager
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*

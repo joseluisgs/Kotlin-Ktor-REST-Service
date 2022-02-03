@@ -2,8 +2,11 @@ package es.joseluisgs.controller
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import es.joseluisgs.entities.Customers
+import es.joseluisgs.entities.CustomersTable
 import es.joseluisgs.entities.Users
 import es.joseluisgs.entities.UsersTable
+import es.joseluisgs.models.Customer
 import es.joseluisgs.models.Role
 import es.joseluisgs.models.User
 import mu.KotlinLogging
@@ -52,7 +55,7 @@ object DataBaseManager {
      */
     private fun createTables() = transaction {
         addLogger(StdOutSqlLogger) // Para que se vea el log de consulas a la base de datos
-        SchemaUtils.create(UsersTable)
+        SchemaUtils.create(UsersTable, CustomersTable)
         logger.info { "Tablas creadas" }
     }
 
@@ -63,7 +66,30 @@ object DataBaseManager {
         // Insertamos los datos.
         // Mira el directorio data
         initDataUsers()
+        initDataCustomers()
         logger.info { "Datos creados" }
+    }
+
+    private fun initDataCustomers() = transaction {
+        val customers = mutableListOf(
+            Customer("1", "Chuck", "Norris", "chuck@norris.com"),
+            Customer("2", "Bruce", "Wayne", "batman@iam.com"),
+            Customer("3", "Peter", "Parker", "spiderman@iam.com"),
+            Customer("4", "Tony", "Stark", "ironman@iam.com"),
+            Customer("5", "Bruce", "Banner", "hulk@iam.com"),
+            Customer("6", "Clark", "Kent", "superman@iam.com"),
+            Customer("7", "Goku", "Son", "songoku@dragonball.com"),
+            Customer("8", "Gohan", "Son", "songohan@dragonball.com"),
+        )
+        customers.forEach {
+            Customers.new {
+                this.firstName = it.firstName
+                this.lastName = it.lastName
+                this.email = it.email
+                createdAt = LocalDateTime.now()
+            }
+        }
+        logger.info { "Customers de ejemplo insertados" }
     }
 
     private fun initDataUsers() = transaction {

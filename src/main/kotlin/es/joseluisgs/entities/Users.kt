@@ -37,5 +37,4 @@ class Users(id: EntityID<Long>) : LongEntity(id) {
             createdAt.toString()
         )
     }
-
 }

@@ -31,11 +31,13 @@ object DataBaseManager {
         // Aplicamos Hiraki para la conexión a la base de datos
         println("Inicializando conexión a la base de datos")
         val config = HikariConfig()
-        config.jdbcUrl = jdbcUrl
-        config.driverClassName = driverClassName
-        config.username = username
-        config.password = password
-        config.maximumPoolSize = maximumPoolSize
+        config.apply {
+            this.jdbcUrl = jdbcUrl
+            this.driverClassName = driverClassName
+            this.username = username
+            this.password = password
+            this.maximumPoolSize = maximumPoolSize
+        }
         Database.connect(HikariDataSource(config))
         logger.info { "Conexión a la base de datos inicializada" }
 

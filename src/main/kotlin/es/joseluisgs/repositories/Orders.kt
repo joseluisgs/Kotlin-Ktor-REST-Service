@@ -1,81 +1,59 @@
 package es.joseluisgs.repositories
 
+import es.joseluisgs.entities.CustomersDAO
+import es.joseluisgs.entities.OrdersDAO
 import es.joseluisgs.models.Customer
 import es.joseluisgs.models.Order
-import es.joseluisgs.models.OrderItem
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDateTime
 import java.util.*
 
-object Orders : CrudRepository<Order, String> {
-    val orders = mutableListOf(
-        Order(
-            "1",
-            "1", listOf(
-                OrderItem("Ham Sandwich", 2, 5.50),
-                OrderItem("Water", 1, 1.50),
-                OrderItem("Beer", 3, 2.30),
-                OrderItem("Cheesecake", 1, 3.75)
-            )
-        ),
-        Order(
-            "2",
-            "2", listOf(
-                OrderItem("Cheeseburger", 1, 8.50),
-                OrderItem("Water", 2, 1.50),
-                OrderItem("Coke", 2, 1.76),
-                OrderItem("Ice Cream", 1, 2.35)
-            )
-        ),
-        Order(
-            "3",
-            "3", listOf(
-                OrderItem("Water", 1, 1.50),
-                OrderItem("Beer", 3, 2.30),
-                OrderItem("Coke", 2, 1.76),
-                OrderItem("Ice Cream", 1, 2.35)
-            )
-        ),
-        Order(
-            "4",
-            "4", listOf(
-                OrderItem("Ham Sandwich", 2, 5.50),
-                OrderItem("Water", 1, 1.50),
-                OrderItem("Coke", 2, 1.76),
-                OrderItem("Cheeseburger", 1, 8.50),
-            )
-        )
-    )
+object Orders: CrudRepository<Order, String> {
 
-    fun isEmpty() = orders.isEmpty()
+    fun isEmpty() = transaction {
+        OrdersDAO.all().empty()
+    }
 
-    override fun getAll(limit: Int): List<Order> = if (limit == 0) orders else orders.take(limit)
+    override fun getAll(limit: Int): List<Order> = transaction {
+        val response = if (limit == 0) OrdersDAO.all() else OrdersDAO.all().limit(limit)
+        return@transaction response.map { it.toOrder() }
+    }
 
-    override fun getById(id: String) = orders.find { it.id == id }
+    override fun getById(id: String): Order? = transaction {
+        OrdersDAO.findById(id.toLong())?.toOrder()
+    }
 
-    override fun update(id: String, entity: Order): Boolean {
-        val index = orders.indexOfFirst { it.id == id }
-        return if (index >= 0) {
-            // Por si nos ha llegado el id cambiado en el objeto distinto al de la ruta
-            entity.id = id
-            orders[index] = entity
-            true
-        } else {
-            false
+    override fun update(id: String, entity: Order) = transaction{
+        val order = OrdersDAO.findById(id.toLong()) ?: return@transaction false
+        val customer = CustomersDAO.findById(entity.customerID.toLong()) ?: return@transaction false
+
+        order.apply {
+            this.customer = customer
+            createdAt = LocalDateTime.parse(entity.createdAt)
         }
+        return@transaction true
     }
 
-    override fun save(entity: Order) {
-        entity.id = UUID.randomUUID().toString()
-        orders.add(entity)
+    override fun save(entity: Order) = transaction {
+        CustomersDAO.findById(entity.customerID.toLong()) ?: return@transaction
+        entity.id = OrdersDAO.new {
+            this.customer = customer
+            createdAt = LocalDateTime.parse(entity.createdAt)
+        }.id.toString()
     }
 
-    override fun delete(id: String) = orders.removeIf { it.id == id }
+    override fun delete(id: String) = transaction {
+        OrdersDAO.findById(id.toLong())?.delete().let { true }
+    }
 
-    fun getContents(id: String) = orders.find { it.id == id }?.contents
+    fun getContents(id: String) = transaction {
+        val contents = OrdersDAO.findById(id.toLong()) ?: return@transaction emptyList<String>()
+        // contents.
+    }
 
-    fun getTotal(id: String) = orders.find { it.id == id }?.contents?.sumOf { it.price * it.amount }
+    // fun getTotal(id: String) = orders.find { it.id == id }?.contents?.sumOf { it.price * it.amount }
 
-    fun getCustomer(id: String): Customer? {
-        val customerID = orders.find { it.id == id }?.customerID
-        return customerID?.let { Customers.getById(it) }
+    fun getCustomer(id: String) = transaction {
+        return@transaction OrdersDAO.findById(id.toLong())?.customer?.id?.toString()
     }
 }

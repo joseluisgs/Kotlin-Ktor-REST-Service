@@ -20,4 +20,10 @@ data class Order(
         LocalDateTime.now().toString(),
         contents
     )
+    constructor(id: String, customerID: String, createdAt: String) : this(
+        id,
+        customerID,
+        createdAt,
+        emptyList()
+    )
 }

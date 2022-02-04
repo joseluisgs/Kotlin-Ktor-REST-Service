@@ -1,6 +1,6 @@
 package es.joseluisgs.repositories
 
-import es.joseluisgs.entities.Customers
+import es.joseluisgs.entities.CustomersDAO
 import es.joseluisgs.models.Customer
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
@@ -11,20 +11,20 @@ import java.time.LocalDateTime
 object Customers : CrudRepository<Customer, String> {
 
     fun isEmpty() = transaction {
-        Customers.all().empty()
+        CustomersDAO.all().empty()
     }
 
-    override fun getAll(limit: Int): List<Customer> = transaction {
-        val response = if (limit == 0) Customers.all() else Customers.all().limit(limit)
+    override fun getAll(limit: Int) = transaction {
+        val response = if (limit == 0) CustomersDAO.all() else CustomersDAO.all().limit(limit)
         return@transaction response.map { it.toCustomer() }
     }
 
-    override fun getById(id: String): Customer? = transaction {
-        Customers.findById(id.toLong())?.toCustomer()
+    override fun getById(id: String) = transaction {
+        CustomersDAO.findById(id.toLong())?.toCustomer()
     }
 
     override fun update(id: String, entity: Customer) = transaction {
-        val customer = Customers.findById(id.toLong()) ?: return@transaction false
+        val customer = CustomersDAO.findById(id.toLong()) ?: return@transaction false
         customer.apply {
             firstName = entity.firstName
             lastName = entity.lastName
@@ -37,7 +37,7 @@ object Customers : CrudRepository<Customer, String> {
 
 
     override fun save(entity: Customer) = transaction {
-        entity.id = Customers.new {
+        entity.id = CustomersDAO.new {
             firstName = entity.firstName
             lastName = entity.lastName
             email = entity.email
@@ -46,6 +46,6 @@ object Customers : CrudRepository<Customer, String> {
     }
 
     override fun delete(id: String) = transaction {
-        Customers.findById(id.toLong())?.delete().let { true }
+        CustomersDAO.findById(id.toLong())?.delete().let { true }
     }
 }

@@ -1,6 +1,6 @@
 package es.joseluisgs.repositories
 
-import es.joseluisgs.entities.Users
+import es.joseluisgs.entities.UsersDAO
 import es.joseluisgs.entities.UsersTable
 import es.joseluisgs.models.User
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -11,19 +11,19 @@ object Users {
 
     fun findByUsername(username: String) = transaction {
         // addLogger(StdOutSqlLogger)
-        Users.find { UsersTable.username eq username }.firstOrNull()?.toUser()
+        UsersDAO.find { UsersTable.username eq username }.firstOrNull()?.toUser()
     }
 
     fun findById(id: String) = transaction {
         // addLogger(StdOutSqlLogger)
-        Users.findById(id.toLong())?.toUser()
+        UsersDAO.findById(id.toLong())?.toUser()
     }
 
     fun hashedPassword(password: String) = BCrypt.hashpw(password, BCrypt.gensalt())
 
     fun isValidCredentials(username: String, password: String) = username.length >= 3 && password.length >= 6
 
-    fun save(user: User): Boolean = transaction {
+    fun save(user: User) = transaction {
         //Credenciales correctas y no existe ese usario en el sistema
         // addLogger(StdOutSqlLogger)
         if (isValidCredentials(
@@ -34,7 +34,7 @@ object Users {
             user.username = user.username.lowercase()
             user.password = hashedPassword(user.password)
 
-            user.id = Users.new {
+            user.id = UsersDAO.new {
                 username = user.username
                 password = user.password
                 role = user.role.toString()
@@ -48,12 +48,12 @@ object Users {
 
     fun isEmpty() = transaction {
         // addLogger(StdOutSqlLogger)
-        Users.all().empty()
+        UsersDAO.all().empty()
     }
 
     fun getAll(limit: Int?): List<User> = transaction {
         // addLogger(StdOutSqlLogger)
-        val response = if (limit == null) Users.all() else Users.all().limit(limit)
+        val response = if (limit == null) UsersDAO.all() else UsersDAO.all().limit(limit)
         return@transaction response.map { it.toUser() }
     }
 

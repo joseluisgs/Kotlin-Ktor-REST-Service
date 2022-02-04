@@ -19,9 +19,9 @@ object UsersTable : LongIdTable() {
 }
 
 // Clase que mapea la tabla de usuarios
-class Users(id: EntityID<Long>) : LongEntity(id) {
+class UsersDAO(id: EntityID<Long>) : LongEntity(id) {
     // Sobre qué tabla me estoy trabajando
-    companion object : LongEntityClass<Users>(UsersTable)
+    companion object : LongEntityClass<UsersDAO>(UsersTable)
 
     var username by UsersTable.username
     var password by UsersTable.password

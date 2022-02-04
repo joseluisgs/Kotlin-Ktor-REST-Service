@@ -16,14 +16,18 @@ object CustomersTable : LongIdTable() {
 }
 
 // Clase que mapea la tabla de usuarios
-class Customers(id: EntityID<Long>) : LongEntity(id) {
+class CustomersDAO(id: EntityID<Long>) : LongEntity(id) {
     // Sobre qué tabla me estoy trabajando
-    companion object : LongEntityClass<Customers>(CustomersTable)
+    companion object : LongEntityClass<CustomersDAO>(CustomersTable)
 
     var firstName by CustomersTable.firstName
     var lastName by CustomersTable.lastName
     var email by CustomersTable.email
     var createdAt by CustomersTable.createdAt
+
+    // Mis orders relacion bidireccional
+    val orders by OrdersDAO referrersOn OrdersTable.customer
+
 
     fun toCustomer(): Customer {
         return Customer(
@@ -32,6 +36,7 @@ class Customers(id: EntityID<Long>) : LongEntity(id) {
             lastName,
             email,
             createdAt.toString()
+            // Mis orders
         )
     }
 }

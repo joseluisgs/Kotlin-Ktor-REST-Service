@@ -2,13 +2,8 @@ package es.joseluisgs.controller
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import es.joseluisgs.entities.Customers
-import es.joseluisgs.entities.CustomersTable
-import es.joseluisgs.entities.Users
-import es.joseluisgs.entities.UsersTable
-import es.joseluisgs.models.Customer
-import es.joseluisgs.models.Role
-import es.joseluisgs.models.User
+import es.joseluisgs.entities.*
+import es.joseluisgs.models.*
 import mu.KotlinLogging
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -57,7 +52,7 @@ object DataBaseManager {
      */
     private fun createTables() = transaction {
         addLogger(StdOutSqlLogger) // Para que se vea el log de consulas a la base de datos
-        SchemaUtils.create(UsersTable, CustomersTable)
+        SchemaUtils.create(UsersTable, CustomersTable, OrdersTable, OrderItemsTable)
         logger.info { "Tablas creadas" }
     }
 
@@ -69,11 +64,17 @@ object DataBaseManager {
         // Mira el directorio data
         initDataUsers()
         initDataCustomers()
+        initDataOrders()
         logger.info { "Datos creados" }
     }
 
+    private fun initDataOrders() {
+
+        logger.info { "Orders de ejemplo insertados" }
+    }
+
     private fun initDataCustomers() = transaction {
-        val customers = mutableListOf(
+        val customers = listOf(
             Customer("1", "Chuck", "Norris", "chuck@norris.com"),
             Customer("2", "Bruce", "Wayne", "batman@iam.com"),
             Customer("3", "Peter", "Parker", "spiderman@iam.com"),
@@ -84,7 +85,7 @@ object DataBaseManager {
             Customer("8", "Gohan", "Son", "songohan@dragonball.com"),
         )
         customers.forEach {
-            Customers.new {
+            CustomersDAO.new {
                 this.firstName = it.firstName
                 this.lastName = it.lastName
                 this.email = it.email
@@ -95,7 +96,7 @@ object DataBaseManager {
     }
 
     private fun initDataUsers() = transaction {
-        val users = mutableListOf(
+        val users = listOf(
             User(
                 "1", "admin",
                 "\$2a\$10\$C3NO0nKdVaAdAi8cE18GA.ExGbYUPyNOrXKC.Clu/xtWdHCJiZ4hq",
@@ -108,7 +109,7 @@ object DataBaseManager {
             )
         )
         users.forEach {
-            Users.new {
+            UsersDAO.new {
                 username = it.username
                 password = it.password
                 role = it.role.toString()

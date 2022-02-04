@@ -11,25 +11,25 @@ object OrderItemsTable : LongIdTable() {
     val item = varchar("item", 150)
     val amount = integer("amount")
     val price = double("price")
-    val order = reference("order", OrdersTable)
+    val order = reference("order_id", OrdersTable)
 }
 
 // Clase que mapea la tabla
-class OrderItemsDAO(id: EntityID<Long>) : LongEntity(id) {
+class OrderItemDAO(id: EntityID<Long>) : LongEntity(id) {
     // Sobre qué tabla me estoy trabajando
-    companion object : LongEntityClass<OrderItemsDAO>(OrderItemsTable)
+    companion object : LongEntityClass<OrderItemDAO>(OrderItemsTable)
 
     var item by OrderItemsTable.item
     var amount by OrderItemsTable.amount
     var price by OrderItemsTable.price
-    var order by OrdersDAO referencedOn OrderItemsTable.order
+    var order by OrderDAO referencedOn OrderItemsTable.order
 
     fun toOrderItem(): OrderItem {
         return OrderItem(
-           item,
-           amount,
-           price,
-           //order.toOrder()
+            item,
+            amount,
+            price,
+            //order.toOrder()
         )
     }
 }

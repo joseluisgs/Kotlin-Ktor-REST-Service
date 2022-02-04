@@ -1,6 +1,6 @@
 package es.joseluisgs.repositories
 
-import es.joseluisgs.entities.CustomersDAO
+import es.joseluisgs.entities.CustomerDAO
 import es.joseluisgs.entities.OrderItemsTable
 import es.joseluisgs.entities.OrdersTable
 import es.joseluisgs.models.Customer
@@ -14,20 +14,20 @@ import java.time.LocalDateTime
 object Customers : CrudRepository<Customer, String> {
 
     fun isEmpty() = transaction {
-        CustomersDAO.all().empty()
+        CustomerDAO.all().empty()
     }
 
     override fun getAll(limit: Int) = transaction {
-        val response = if (limit == 0) CustomersDAO.all() else CustomersDAO.all().limit(limit)
+        val response = if (limit == 0) CustomerDAO.all() else CustomerDAO.all().limit(limit)
         return@transaction response.map { it.toCustomer() }
     }
 
     override fun getById(id: String) = transaction {
-        CustomersDAO.findById(id.toLong())?.toCustomer()
+        CustomerDAO.findById(id.toLong())?.toCustomer()
     }
 
     override fun update(id: String, entity: Customer) = transaction {
-        val customer = CustomersDAO.findById(id.toLong()) ?: return@transaction false
+        val customer = CustomerDAO.findById(id.toLong()) ?: return@transaction false
         customer.apply {
             firstName = entity.firstName
             lastName = entity.lastName
@@ -41,7 +41,7 @@ object Customers : CrudRepository<Customer, String> {
 
 
     override fun save(entity: Customer) = transaction {
-        entity.id = CustomersDAO.new {
+        entity.id = CustomerDAO.new {
             firstName = entity.firstName
             lastName = entity.lastName
             email = entity.email
@@ -51,7 +51,7 @@ object Customers : CrudRepository<Customer, String> {
 
     override fun delete(id: String) = transaction {
         // Primero debo eliminar las orders asociados y su contenido
-        val customer = CustomersDAO.findById(id.toLong()) ?: return@transaction false
+        val customer = CustomerDAO.findById(id.toLong()) ?: return@transaction false
         // Podemos hacerlo con metodos de objetos o usando consultas
         /*customer.orders.forEach {
             it.contents.forEach { c ->
@@ -70,6 +70,6 @@ object Customers : CrudRepository<Customer, String> {
     }
 
     fun getOrders(id: String) = transaction {
-        CustomersDAO.findById(id.toLong())?.orders?.map { it.toOrder() }
+        CustomerDAO.findById(id.toLong())?.orders?.map { it.toOrder() }
     }
 }

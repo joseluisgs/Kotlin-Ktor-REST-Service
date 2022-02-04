@@ -109,7 +109,7 @@ object DataBaseManager {
             Customer("8", "Gohan", "Son", "songohan@dragonball.com"),
         )
         customers.forEach {
-            CustomersDAO.new {
+            CustomerDAO.new {
                 this.firstName = it.firstName
                 this.lastName = it.lastName
                 this.email = it.email
@@ -121,97 +121,97 @@ object DataBaseManager {
 
 
     private fun initDataOrders() = transaction {
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(1)!!
+        OrderDAO.new {
+            customer = CustomerDAO.findById(1)!!
             createdAt = LocalDateTime.now()
         }
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(2)!!
+        OrderDAO.new {
+            customer = CustomerDAO.findById(2)!!
             createdAt = LocalDateTime.now()
         }
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(3)!!
+        OrderDAO.new {
+            customer = CustomerDAO.findById(3)!!
             createdAt = LocalDateTime.now()
         }
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(4)!!
+        OrderDAO.new {
+            customer = CustomerDAO.findById(4)!!
             createdAt = LocalDateTime.now()
         }
         logger.info { "Orders de ejemplo insertados" }
     }
 
     private fun initDataOrderItems() = transaction {
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Ham Sandwich"
             amount = 2
             price = 5.50
-            order = OrdersDAO.findById(1)!!
+            order = OrderDAO.findById(1)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Cheese Sandwich"
             amount = 1
             price = 4.50
-            order = OrdersDAO.findById(1)!!
+            order = OrderDAO.findById(1)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Egg Sandwich"
             amount = 1
             price = 3.50
-            order = OrdersDAO.findById(1)!!
+            order = OrderDAO.findById(1)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Beer"
             amount = 3
             price = 6.50
-            order = OrdersDAO.findById(1)!!
+            order = OrderDAO.findById(1)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Cheesecake"
             amount = 1
             price = 3.75
-            order = OrdersDAO.findById(2)!!
+            order = OrderDAO.findById(2)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Coffee"
             amount = 1
             price = 2.50
-            order = OrdersDAO.findById(2)!!
+            order = OrderDAO.findById(2)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Coke"
             amount = 2
             price = 2.50
-            order = OrdersDAO.findById(2)!!
+            order = OrderDAO.findById(2)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Coffee"
             amount = 3
             price = 2.50
-            order = OrdersDAO.findById(3)!!
+            order = OrderDAO.findById(3)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Ham Sandwich"
             amount = 1
             price = 2.50
-            order = OrdersDAO.findById(3)!!
+            order = OrderDAO.findById(3)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Cheese Sandwich"
             amount = 2
             price = 2.50
-            order = OrdersDAO.findById(4)!!
+            order = OrderDAO.findById(4)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Coffee"
             amount = 1
             price = 2.50
-            order = OrdersDAO.findById(4)!!
+            order = OrderDAO.findById(4)!!
         }
-        OrderItemsDAO.new {
+        OrderItemDAO.new {
             item = "Coke"
             amount = 2
             price = 2.50
-            order = OrdersDAO.findById(4)!!
+            order = OrderDAO.findById(4)!!
         }
     }
 }

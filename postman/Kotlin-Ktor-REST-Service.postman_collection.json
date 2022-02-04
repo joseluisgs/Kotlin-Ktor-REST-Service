@@ -163,6 +163,28 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GET ORDERS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:6969/rest/customers/2/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "6969",
+							"path": [
+								"rest",
+								"customers",
+								"2",
+								"orders"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

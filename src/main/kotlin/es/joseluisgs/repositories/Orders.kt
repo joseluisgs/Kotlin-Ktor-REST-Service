@@ -1,9 +1,9 @@
 package es.joseluisgs.repositories
 
-import es.joseluisgs.entities.CustomersDAO
-import es.joseluisgs.entities.OrderItemsDAO
+import es.joseluisgs.entities.CustomerDAO
+import es.joseluisgs.entities.OrderDAO
+import es.joseluisgs.entities.OrderItemDAO
 import es.joseluisgs.entities.OrderItemsTable
-import es.joseluisgs.entities.OrdersDAO
 import es.joseluisgs.models.Order
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -12,21 +12,21 @@ import java.time.LocalDateTime
 object Orders : CrudRepository<Order, String> {
 
     fun isEmpty() = transaction {
-        OrdersDAO.all().empty()
+        OrderDAO.all().empty()
     }
 
     override fun getAll(limit: Int): List<Order> = transaction {
-        val response = if (limit == 0) OrdersDAO.all() else OrdersDAO.all().limit(limit)
+        val response = if (limit == 0) OrderDAO.all() else OrderDAO.all().limit(limit)
         return@transaction response.map { it.toOrder() }
     }
 
     override fun getById(id: String): Order? = transaction {
-        OrdersDAO.findById(id.toLong())?.toOrder()
+        OrderDAO.findById(id.toLong())?.toOrder()
     }
 
     override fun update(id: String, entity: Order) = transaction {
-        var order = OrdersDAO.findById(id.toLong()) ?: return@transaction false
-        val customer = CustomersDAO.findById(entity.customerID.toLong()) ?: return@transaction false
+        var order = OrderDAO.findById(id.toLong()) ?: return@transaction false
+        val customer = CustomerDAO.findById(entity.customerId.toLong()) ?: return@transaction false
 
         order.apply {
             this.customer = customer
@@ -38,38 +38,38 @@ object Orders : CrudRepository<Order, String> {
         OrderItemsTable.deleteWhere { OrderItemsTable.order eq order.id }
         // Insertamos los nuevos contents
         entity.contents.forEach {
-            it.orderID = entity.id
-            OrderItemsDAO.new {
+            it.orderId = entity.id
+            OrderItemDAO.new {
                 item = it.item
                 amount = it.amount
                 price = it.price
-                this.order = OrdersDAO.findById(entity.id.toLong())!!
+                this.order = OrderDAO.findById(entity.id.toLong())!!
             }
         }
         return@transaction true
     }
 
     override fun save(entity: Order) = transaction {
-        val customer = CustomersDAO.findById(entity.customerID.toLong()) ?: return@transaction
-        entity.id = OrdersDAO.new {
+        val customer = CustomerDAO.findById(entity.customerId.toLong()) ?: return@transaction
+        entity.id = OrderDAO.new {
             this.customer = customer
             createdAt = LocalDateTime.parse(entity.createdAt)
         }.id.toString()
         // Ahora debemos insertar los contenidos de la orden
         entity.contents.forEach {
-            it.orderID = entity.id
-            OrderItemsDAO.new {
+            it.orderId = entity.id
+            OrderItemDAO.new {
                 item = it.item
                 amount = it.amount
                 price = it.price
-                order = OrdersDAO.findById(entity.id.toLong())!!
+                order = OrderDAO.findById(entity.id.toLong())!!
             }
         }
     }
 
     override fun delete(id: String) = transaction {
         // Borramos el order y su contenido
-        val order = OrdersDAO.findById(id.toLong()) ?: return@transaction false
+        val order = OrderDAO.findById(id.toLong()) ?: return@transaction false
         // Con foreach el order y su conten
         // order.contents.forEach { it.delete() }
         // Con consulta
@@ -79,14 +79,14 @@ object Orders : CrudRepository<Order, String> {
     }
 
     fun getContents(id: String) = transaction {
-        return@transaction OrdersDAO.findById(id.toLong())?.contents?.map { it.toOrderItem() }
+        return@transaction OrderDAO.findById(id.toLong())?.contents?.map { it.toOrderItem() }
     }
 
     fun getTotal(id: String) = transaction {
-        return@transaction OrdersDAO.findById(id.toLong())?.contents?.sumOf { it.price * it.amount }
+        return@transaction OrderDAO.findById(id.toLong())?.contents?.sumOf { it.price * it.amount }
     }
 
     fun getCustomer(id: String) = transaction {
-        return@transaction OrdersDAO.findById(id.toLong())?.customer?.toCustomer()
+        return@transaction OrderDAO.findById(id.toLong())?.customer?.toCustomer()
     }
 }

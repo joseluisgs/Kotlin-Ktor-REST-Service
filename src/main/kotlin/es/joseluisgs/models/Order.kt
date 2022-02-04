@@ -9,7 +9,7 @@ import java.time.LocalDateTime
  */
 data class Order(
     var id: String = "",
-    val customerID: String,
+    val customerId: String,
     val createdAt: String = LocalDateTime.now().toString(),
     val contents: List<OrderItem>
 ) {

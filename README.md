@@ -20,12 +20,15 @@ Servicio web para API REST con Kotlin y Ktor.
       - [Parámetros de cuerpo](#parámetros-de-cuerpo)
       - [Peticiones multiparte](#peticiones-multiparte)
     - [Autenticación y Autorización](#autenticación-y-autorización)
+  - [Exposed SQL](#exposed-sql)
+  - [Testing](#testing)
   - [Referencia API REST](#referencia-api-rest)
     - [Recurso Customers](#recurso-customers)
       - [Get all customers](#get-all-customers)
       - [Get customer by id](#get-customer-by-id)
       - [Update customer by id](#update-customer-by-id)
       - [Delete customer by id](#delete-customer-by-id)
+      - [Get orders of customer by id](#get-orders-of-customer-by-id)
     - [Recurso Orders](#recurso-orders)
       - [Get all orders](#get-all-orders)
       - [Get order by id](#get-order-by-id)
@@ -51,6 +54,8 @@ Servicio web para API REST con Kotlin y Ktor.
 
 ## Acerca de
 El proyecto consiste en realizar un servicio REST con Kotlin y Ktor. Para ello vamos a usar la tecnologías que nos propone Jetbrains para hacer todo el trabajo, desde la creación de la API REST, hasta la implementación de la misma, así como la serialización de objetos y/o acceso al almacenamiento de los mismos.
+
+Para el almacenamiento de la información se ha usado una H2 Database donde la usamos gracias a la librería de Jetbrains [Exposed](https://github.com/JetBrains/Exposed).
 
 ## Ktor
 [Ktor](https://ktor.io/) es un nuevo framework para desarrollar servicios y clientes asincrónicos. Es 100% [Kotlin](https://kotlinlang.org/) y se ejecuta en usando [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html). Admite proyectos multiplataforma, lo que significa que puede usarlo para cualquier proyecto dirigido a JVM, Android, iOS o Javascript. En este proyecto aprovecharemos Ktor para crear un servicio web para consumir una API REST. Además, aplicaremos Ktor para devolver páginas web.
@@ -89,6 +94,18 @@ install(ContentNegotiation) {
   json()
 }
 ```
+
+Podemos dejar el Json formateado, con el [constructor de serialización](https://ktor.io/docs/kotlin-serialization.html#register_converter) Kotlin de Kotlin
+```kotlin
+install(ContentNegotiation) {
+  // Lo ponemos bonito :)
+  json(Json {
+      prettyPrint = true
+      isLenient = true
+  })
+}
+```
+
 ### Procesando Request
 Dentro de un controlador de ruta, puedes obtener acceso a una solicitud utilizando la propiedad call.request. Esto devuelve la instancia de ApplicationRequest y proporciona acceso a varios parámetros de solicitud. 
 ```kotlin
@@ -168,6 +185,60 @@ routing {
 }
 ```
 
+## Exposed SQL
+![exposed](https://github.com/JetBrains/Exposed/raw/master/docs/logo.png)
+
+Para el almacenamiento de la información se ha usado Exposed, el cual nos ofrece dos modos de operación. Hemos usado el modelo DAO para este ejemplo. Puedes ver más información al respecto [en este ejemplo](https://github.com/joseluisgs/Kotlin-Exposed-SQL). Para ello trabajamos con unas tablas en la base de datos y unas clases [DAO](https://reactiveprogramming.io/blog/es/patrones-arquitectonicos/dao) que mapean las operaciones con objetos.
+
+Se ha seguido un patrón CRUD basado en repositorios  para la mayoría de las operaciones. Para las relaciones se han usado las clases relacionadas.
+```kotlin
+// Tabla de orders
+object OrdersTable : LongIdTable() {
+    //Indicamos los campos de la tabla
+    val customer = reference("customer_id", CustomersTable)
+    val createdAt = datetime("created_at")
+}
+
+// Clase que mapea la tabla de Order en Objetos DAO
+class OrderDAO(id: EntityID<Long>) : LongEntity(id) {
+    // Sobre qué tabla me estoy trabajando para hacer los Bindigs del objeto con los elementos de la tabbla/fila
+    companion object : LongEntityClass<OrderDAO>(OrdersTable)
+    // Indicamos que este pedido tiene una relacion con cliente. 1 Pedido pertenece a 1 Cliente (1:M). Un cliente puede tener varios pedidos.
+    var customer by CustomerDAO referencedOn OrdersTable.customer
+    var createdAt by OrdersTable.createdAt
+
+    // Relación inversa donde soy referenciado. 1 Pedido tiene varios contenidos (1:M). Es opcional ponerlo, pero nos ayuda a mejorar las relaciones.
+    // evitando consultas y haciendo uso de los métodos.
+    val contents by OrderItemDAO referrersOn OrderItemsTable.order
+}
+```
+
+## Testing
+Ktor ofrece un [motor de test](https://ktor.io/docs/testing.html) especial que no crea un servidor web, no se une a los sockets y no realiza ninguna solicitud HTTP real. En su lugar, se conecta directamente a los mecanismos internos y procesa una llamada de aplicación directamente. Esto da como resultado una ejecución de pruebas más rápida en comparación con la ejecución de un servidor web completo para la prueba. Además, puede configurar pruebas de extremo a extremo para probar los puntos finales del servidor utilizando el cliente HTTP de Ktor.
+
+Para ello debemos crear nuestra aplicación testeable y luego procesar el endpoint con la petición indicada.
+```kotlin
+@Test
+fun testGetCustomers() = withApplication(testEnv) {
+    with(handleRequest(HttpMethod.Get, "/rest//customers?limit=2")) {
+        assertEquals(HttpStatusCode.OK, response.status())
+        assertTrue(response.content!!.isNotEmpty())
+        assertTrue(response.content!!.contains("chuck@norris.com"))
+
+    }
+}
+```
+
+Además podemos testar punto a punto, usando el cliente HTTP de Ktor.
+```kotlin
+@Test
+fun testGetCustomers() = runBlocking {
+    val httpResponse: HttpStatement = client.get("http://localhost:6969/rest/customers?limit=2")
+    val response: String = httpResponse.receive()
+    assertTrue(response.isNotEmpty())
+    assertTrue(response.contains("chuck@norris.com"))
+}
+```
 
 ## Referencia API REST
 
@@ -189,6 +260,10 @@ routing {
 #### Delete customer by id
 ```
   DELETE /rest/customers/{id}
+```
+#### Get orders of customer by id
+```
+  GET /rest/customers/{id}/orders
 ```
 
 ### Recurso Orders
@@ -265,6 +340,9 @@ routing {
 ```
 
 ## PostMan
+
+![postman](https://testerhouse.com/wp-content/uploads/2019/09/postman-logo.png)
+
 Puedes consumir el servicio REST con PostMan. Para ello solo debes importar la [colección de ejemplo](./postman/Kotlin-Ktor-REST-Service.postman_collection.json) y ejecutar las mismas.
 
 ## Autor

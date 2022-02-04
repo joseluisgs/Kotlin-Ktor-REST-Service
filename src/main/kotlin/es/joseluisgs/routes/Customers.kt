@@ -102,6 +102,24 @@ fun Route.customersRoutes() {
                 )
             }
         }
+
+        get("{id}/orders") {
+            // Si es nulo, hacemos un retur del error con @get para indicar que sale de esta parte del lambda,
+            // si no saldríamos del metodo prinicipal y porque usamos call
+            val id = call.parameters["id"] ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                mapOf("error" to "Missing or malformed id")
+            )
+
+            // Buscamos el cliente con el id pasado, si no está devolvemos el error
+            val orders =
+                Customers.getOrders(id) ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    mapOf("error" to "No orders for customer with id $id")
+                )
+
+            call.respond(orders)
+        }
     }
 }
 

@@ -2,13 +2,11 @@ package es.joseluisgs.repositories
 
 import es.joseluisgs.entities.CustomersDAO
 import es.joseluisgs.entities.OrdersDAO
-import es.joseluisgs.models.Customer
 import es.joseluisgs.models.Order
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
-import java.util.*
 
-object Orders: CrudRepository<Order, String> {
+object Orders : CrudRepository<Order, String> {
 
     fun isEmpty() = transaction {
         OrdersDAO.all().empty()
@@ -23,7 +21,7 @@ object Orders: CrudRepository<Order, String> {
         OrdersDAO.findById(id.toLong())?.toOrder()
     }
 
-    override fun update(id: String, entity: Order) = transaction{
+    override fun update(id: String, entity: Order) = transaction {
         val order = OrdersDAO.findById(id.toLong()) ?: return@transaction false
         val customer = CustomersDAO.findById(entity.customerID.toLong()) ?: return@transaction false
 
@@ -47,13 +45,14 @@ object Orders: CrudRepository<Order, String> {
     }
 
     fun getContents(id: String) = transaction {
-        val contents = OrdersDAO.findById(id.toLong()) ?: return@transaction emptyList<String>()
-        // contents.
+        return@transaction OrdersDAO.findById(id.toLong())?.contents?.map { it.toOrderItem() }
     }
 
-    // fun getTotal(id: String) = orders.find { it.id == id }?.contents?.sumOf { it.price * it.amount }
+    fun getTotal(id: String) = transaction {
+        return@transaction OrdersDAO.findById(id.toLong())?.contents?.sumOf { it.price * it.amount }
+    }
 
     fun getCustomer(id: String) = transaction {
-        return@transaction OrdersDAO.findById(id.toLong())?.customer?.id?.toString()
+        return@transaction OrdersDAO.findById(id.toLong())?.customer?.toCustomer()
     }
 }

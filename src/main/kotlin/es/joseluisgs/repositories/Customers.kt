@@ -48,4 +48,8 @@ object Customers : CrudRepository<Customer, String> {
     override fun delete(id: String) = transaction {
         CustomersDAO.findById(id.toLong())?.delete().let { true }
     }
+
+    fun getOrders(id: String) = transaction {
+        CustomersDAO.findById(id.toLong())?.orders?.map { it.toOrder() }
+    }
 }

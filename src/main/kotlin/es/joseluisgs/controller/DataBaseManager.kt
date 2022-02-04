@@ -3,7 +3,9 @@ package es.joseluisgs.controller
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import es.joseluisgs.entities.*
-import es.joseluisgs.models.*
+import es.joseluisgs.models.Customer
+import es.joseluisgs.models.Role
+import es.joseluisgs.models.User
 import mu.KotlinLogging
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -68,8 +70,23 @@ object DataBaseManager {
         logger.info { "Datos creados" }
     }
 
-    private fun initDataOrders() {
-
+    private fun initDataOrders() = transaction {
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(1)!!
+            createdAt = LocalDateTime.now()
+        }
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(2)!!
+            createdAt = LocalDateTime.now()
+        }
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(3)!!
+            createdAt = LocalDateTime.now()
+        }
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(4)!!
+            createdAt = LocalDateTime.now()
+        }
         logger.info { "Orders de ejemplo insertados" }
     }
 

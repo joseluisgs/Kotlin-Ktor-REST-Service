@@ -1,7 +1,10 @@
 package es.joseluisgs.repositories
 
 import es.joseluisgs.entities.CustomersDAO
+import es.joseluisgs.entities.OrderItemsTable
+import es.joseluisgs.entities.OrdersTable
 import es.joseluisgs.models.Customer
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
@@ -31,7 +34,8 @@ object Customers : CrudRepository<Customer, String> {
             email = entity.email
             createdAt = LocalDateTime.parse(entity.createdAt)
         }
-
+        // Pro si en el bbody me han metido otra id que no corresponde con la que tenemos en la bd
+        entity.id = id
         return@transaction true
     }
 
@@ -46,7 +50,23 @@ object Customers : CrudRepository<Customer, String> {
     }
 
     override fun delete(id: String) = transaction {
-        CustomersDAO.findById(id.toLong())?.delete().let { true }
+        // Primero debo eliminar las orders asociados y su contenido
+        val customer = CustomersDAO.findById(id.toLong()) ?: return@transaction false
+        // Podemos hacerlo con metodos de objetos o usando consultas
+        /*customer.orders.forEach {
+            it.contents.forEach { c ->
+                c.delete()
+            }
+            it.delete()
+        }*/
+        // Con consultas de sql
+        customer.orders.forEach {
+            OrderItemsTable.deleteWhere { OrderItemsTable.order eq it.id }
+            // it.delete() // Si tuvieras varios me ejecutaria esto varias veces, por eso en una consulta unica
+        }
+        OrdersTable.deleteWhere { OrdersTable.customer eq id.toLong() }
+        customer.delete()
+        return@transaction true
     }
 
     fun getOrders(id: String) = transaction {

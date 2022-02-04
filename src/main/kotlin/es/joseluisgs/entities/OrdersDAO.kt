@@ -20,6 +20,7 @@ class OrdersDAO(id: EntityID<Long>) : LongEntity(id) {
 
     var customer by CustomersDAO referencedOn OrdersTable.customer
     var createdAt by OrdersTable.createdAt
+
     // Relación inversa donde soy referenciado
     val contents by OrderItemsDAO referrersOn OrderItemsTable.order
 
@@ -28,7 +29,7 @@ class OrdersDAO(id: EntityID<Long>) : LongEntity(id) {
             id.toString(),
             customer.id.toString(),
             createdAt.toString(),
-            // contents.map { it.toOrderItem() }
+            contents.map { it.toOrderItem() }
         )
     }
 }

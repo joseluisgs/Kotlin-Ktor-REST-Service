@@ -11,6 +11,7 @@ data class User(
     val role: Role = Role.USER,
     val createdAt: String = LocalDateTime.now().toString(),
 ) {
+    
     // Para quitar el Password
     fun toResponse(): Map<String, String> {
         return mapOf(

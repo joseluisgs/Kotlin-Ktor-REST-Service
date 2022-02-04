@@ -58,6 +58,8 @@ object DataBaseManager {
         logger.info { "Tablas creadas" }
     }
 
+    // *** Esto es opcional porque quiero tener unos datos iniciales en la base de datos ***
+
     /**
      * Función para inicializar los datos
      */
@@ -67,49 +69,8 @@ object DataBaseManager {
         initDataUsers()
         initDataCustomers()
         initDataOrders()
+        initDataOrderItems()
         logger.info { "Datos creados" }
-    }
-
-    private fun initDataOrders() = transaction {
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(1)!!
-            createdAt = LocalDateTime.now()
-        }
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(2)!!
-            createdAt = LocalDateTime.now()
-        }
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(3)!!
-            createdAt = LocalDateTime.now()
-        }
-        OrdersDAO.new {
-            customer = CustomersDAO.findById(4)!!
-            createdAt = LocalDateTime.now()
-        }
-        logger.info { "Orders de ejemplo insertados" }
-    }
-
-    private fun initDataCustomers() = transaction {
-        val customers = listOf(
-            Customer("1", "Chuck", "Norris", "chuck@norris.com"),
-            Customer("2", "Bruce", "Wayne", "batman@iam.com"),
-            Customer("3", "Peter", "Parker", "spiderman@iam.com"),
-            Customer("4", "Tony", "Stark", "ironman@iam.com"),
-            Customer("5", "Bruce", "Banner", "hulk@iam.com"),
-            Customer("6", "Clark", "Kent", "superman@iam.com"),
-            Customer("7", "Goku", "Son", "songoku@dragonball.com"),
-            Customer("8", "Gohan", "Son", "songohan@dragonball.com"),
-        )
-        customers.forEach {
-            CustomersDAO.new {
-                this.firstName = it.firstName
-                this.lastName = it.lastName
-                this.email = it.email
-                createdAt = LocalDateTime.now()
-            }
-        }
-        logger.info { "Customers de ejemplo insertados" }
     }
 
     private fun initDataUsers() = transaction {
@@ -136,5 +97,121 @@ object DataBaseManager {
         logger.info { "Usuarios de ejemplo insertados" }
     }
 
+    private fun initDataCustomers() = transaction {
+        val customers = listOf(
+            Customer("1", "Chuck", "Norris", "chuck@norris.com"),
+            Customer("2", "Bruce", "Wayne", "batman@iam.com"),
+            Customer("3", "Peter", "Parker", "spiderman@iam.com"),
+            Customer("4", "Tony", "Stark", "ironman@iam.com"),
+            Customer("5", "Bruce", "Banner", "hulk@iam.com"),
+            Customer("6", "Clark", "Kent", "superman@iam.com"),
+            Customer("7", "Goku", "Son", "songoku@dragonball.com"),
+            Customer("8", "Gohan", "Son", "songohan@dragonball.com"),
+        )
+        customers.forEach {
+            CustomersDAO.new {
+                this.firstName = it.firstName
+                this.lastName = it.lastName
+                this.email = it.email
+                createdAt = LocalDateTime.now()
+            }
+        }
+        logger.info { "Customers de ejemplo insertados" }
+    }
 
+
+    private fun initDataOrders() = transaction {
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(1)!!
+            createdAt = LocalDateTime.now()
+        }
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(2)!!
+            createdAt = LocalDateTime.now()
+        }
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(3)!!
+            createdAt = LocalDateTime.now()
+        }
+        OrdersDAO.new {
+            customer = CustomersDAO.findById(4)!!
+            createdAt = LocalDateTime.now()
+        }
+        logger.info { "Orders de ejemplo insertados" }
+    }
+
+    private fun initDataOrderItems() = transaction {
+        OrderItemsDAO.new {
+            item = "Ham Sandwich"
+            amount = 2
+            price = 5.50
+            order = OrdersDAO.findById(1)!!
+        }
+        OrderItemsDAO.new {
+            item = "Cheese Sandwich"
+            amount = 1
+            price = 4.50
+            order = OrdersDAO.findById(1)!!
+        }
+        OrderItemsDAO.new {
+            item = "Egg Sandwich"
+            amount = 1
+            price = 3.50
+            order = OrdersDAO.findById(1)!!
+        }
+        OrderItemsDAO.new {
+            item = "Beer"
+            amount = 3
+            price = 6.50
+            order = OrdersDAO.findById(1)!!
+        }
+        OrderItemsDAO.new {
+            item = "Cheesecake"
+            amount = 1
+            price = 3.75
+            order = OrdersDAO.findById(2)!!
+        }
+        OrderItemsDAO.new {
+            item = "Coffee"
+            amount = 1
+            price = 2.50
+            order = OrdersDAO.findById(2)!!
+        }
+        OrderItemsDAO.new {
+            item = "Coke"
+            amount = 2
+            price = 2.50
+            order = OrdersDAO.findById(2)!!
+        }
+        OrderItemsDAO.new {
+            item = "Coffee"
+            amount = 3
+            price = 2.50
+            order = OrdersDAO.findById(3)!!
+        }
+        OrderItemsDAO.new {
+            item = "Ham Sandwich"
+            amount = 1
+            price = 2.50
+            order = OrdersDAO.findById(3)!!
+        }
+        OrderItemsDAO.new {
+            item = "Cheese Sandwich"
+            amount = 2
+            price = 2.50
+            order = OrdersDAO.findById(4)!!
+        }
+        OrderItemsDAO.new {
+            item = "Coffee"
+            amount = 1
+            price = 2.50
+            order = OrdersDAO.findById(4)!!
+        }
+        OrderItemsDAO.new {
+            item = "Coke"
+            amount = 2
+            price = 2.50
+            order = OrdersDAO.findById(4)!!
+        }
+    }
 }

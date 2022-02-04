@@ -11,6 +11,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.cio.*
+import kotlinx.serialization.json.Json
 
 
 fun main(args: Array<String>) = EngineMain.main(args)
@@ -62,7 +63,11 @@ private fun Application.initRoutes(presentacion: String, mode: String) {
  */
 private fun Application.initContentNegotiation() {
     install(ContentNegotiation) {
-        json()
+        // Lo ponemos bonito :)
+        json(Json {
+            prettyPrint = true
+            isLenient = true
+        })
     }
 }
 
